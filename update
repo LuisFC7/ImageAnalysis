@@ -1,0 +1,49 @@
+import cv2#Library to manipulate images
+import numpy as np
+import array
+import binascii
+from PIL import Image#library to manipulate an image
+
+def get_data(height,width,channels):
+    image_aux = Image.open("Imagen7.jpeg")#image_aux means a second object of imagen
+    data = list(image_aux.getdata())#variable data to get value's pixel
+    image_aux.close()
+    #print(data)#print matrix of pixels with values RGB
+    total=height*width
+    matriz = np.array(data)
+    print("Rojo")
+    print(matriz[:, 0])
+    print("Azul")
+    print(matriz[:, 1])
+    print("Verde")
+    print(matriz[:, 2])
+
+    grayconvert(matriz,total)
+
+def grayconvert(matriz,total):
+
+   for i in range(total):
+       #print(int((matriz[:, 0]+matriz[:, 1]+matriz[:, 2])/3), end= " ")//esta linea no sirve:(
+       print(int((matriz[i][0] + matriz[i][1] + matriz[i][2]) / 3), end=" ")
+   print()
+
+
+def doing_matrix(height,width):
+    original_matriz = []
+    for i in range(height):#fill matrix of zeros
+        original_matriz.append([0] * width)  # Matriz has been created
+
+    #next lines are commented, they are just for print matrix
+    # for i in range(height):
+    #   for j in range(width):
+    #       print(original_matriz[i][j], end=" ")
+    #   print()
+
+imagen=cv2.imread('Imagen7.jpeg',1)#Reading image
+cv2.imshow("Try",imagen)
+height, width,channels = imagen.shape #Here we are declaring three variables to obtain size data of image
+print(height, width, channels)#Printing it
+cv2.waitKey(0)#Show image
+cv2.destroyAllWindows()
+
+get_data(height,width,channels)#callin get data function
