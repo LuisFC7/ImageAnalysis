@@ -1,0 +1,45 @@
+import cv2#Library to manipulate images
+import numpy as np
+import array
+import binascii
+from PIL import Image#library to manipulate an image
+
+def get_data(height,width,channels):
+    image_aux = Image.open("Imagen7.jpg")#image_aux means a second object of imagen
+    data = list(image_aux.getdata())#variable data to get value's pixel
+    image_aux.close()
+    #print(data)#print matrix of pixels with values RGB
+    matriz = np.array(data)
+    print("Rojo")
+    print(matriz[:, 0])
+    print("Azul")
+    print(matriz[:, 1])
+    print("Verde")
+    print(matriz[:, 2])
+
+
+def grayconvert(imagen):
+    gray_image=cv2.cvtColor(imagen,cv2.COLOR_BGR2GRAY)#esta función convierte la imagen original en grises
+    cv2.imshow("Imagen en grises",gray_image)#esta la muestra
+    cv2.waitKey(0)
+
+
+def doing_matrix(height,width):
+    original_matriz = []
+    for i in range(height):#fill matrix of zeros
+        original_matriz.append([0] * width)  # Matriz has been created
+
+    #next lines are commented, they are just for print matrix
+    # for i in range(height):
+    #   for j in range(width):
+    #       print(original_matriz[i][j], end=" ")
+    #   print()
+
+imagen=cv2.imread('Imagen7.jpg',1)#Reading image
+cv2.imshow("Original",imagen)
+height, width,channels = imagen.shape #Here we are declaring three variables to obtain size data of image
+print(height, width, channels)#Printing it
+cv2.waitKey(0)#Show image
+cv2.destroyAllWindows()
+
+grayconvert(imagen)
