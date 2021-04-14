@@ -22,6 +22,7 @@ def grayconvert(imagen):
     gray_image=cv2.cvtColor(imagen,cv2.COLOR_BGR2GRAY)#esta función convierte la imagen original en grises
     cv2.imshow("Imagen en grises",gray_image)#esta la muestra
     cv2.waitKey(0)
+    cv2.imwrite("grayimage.jpg",gray_image)#this line saves the new image in grayscale
 
 
 def doing_matrix(height,width):
