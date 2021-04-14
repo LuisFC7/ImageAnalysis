@@ -31,6 +31,9 @@ def grayconvert(matrizT):
     print(matrizT)
     pil_image = Image.fromarray(matrizT)
     pil_image.show()
+    #guarda la imagen en gris
+    imgray.save('Grises.jpg')
+
 
 def gethistogram(image_aux):
     img = cv2.imread('grayimage.jpg',1)
