@@ -5,24 +5,30 @@ import binascii
 from PIL import Image#library to manipulate an image
 
 def get_data(height,width,channels):
-    image_aux = Image.open("Imagen7.jpg")#image_aux means a second object of imagen
+
+    image_aux = Image.open("grayimage.jpg")#image_aux means a second object of imagen
     data = list(image_aux.getdata())#variable data to get value's pixel
     image_aux.close()
-    #print(data)#print matrix of pixels with values RGB
-    matriz = np.array(data)
-    print("Rojo")
-    print(matriz[:, 0])
-    print("Azul")
-    print(matriz[:, 1])
-    print("Verde")
-    print(matriz[:, 2])
+    print(data)#print matrix of pixels with values RGB
+    #matriz = np.array(data)
+    #print("Rojo")
+    #print(matriz[:, 0])
+    #print("Azul")
+    #print(matriz[:, 1])
+    #print("Verde")
+    #print(matriz[:, 2])
 
 
 def grayconvert(imagen):
-    gray_image=cv2.cvtColor(imagen,cv2.COLOR_BGR2GRAY)#esta función convierte la imagen original en grises
+    gray_image = cv2.cvtColor(imagen,cv2.COLOR_BGR2GRAY)#esta función convierte la imagen original en grises
     cv2.imshow("Imagen en grises",gray_image)#esta la muestra
     cv2.waitKey(0)
     cv2.imwrite("grayimage.jpg",gray_image)#this line saves the new image in grayscale
+    imagengris = cv2.imread('grayimage.jpg', 1)  # Reading image
+    height, width, channels = imagengris.shape#obtención de datos de imagen de gris
+
+    get_data(height,width,channels)#llamada a funcion para obtener datos de matriz
+
 
 
 def doing_matrix(height,width):
@@ -39,6 +45,7 @@ def doing_matrix(height,width):
 imagen=cv2.imread('Imagen7.jpg',1)#Reading image
 cv2.imshow("Original",imagen)
 height, width,channels = imagen.shape #Here we are declaring three variables to obtain size data of image
+print("Valores originales de la imagen")
 print(height, width, channels)#Printing it
 cv2.waitKey(0)#Show image
 cv2.destroyAllWindows()
