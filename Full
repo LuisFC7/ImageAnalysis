@@ -1,0 +1,68 @@
+import cv2#Library to manipulate images
+import numpy as np
+import array
+import binascii
+from PIL import Image#library to manipulate an image
+import matplotlib.pyplot as plt
+
+def get_data(height,width,channels):
+
+    image_aux = Image.open("grayimage.jpg")#image_aux means a second object of imagen
+    data = list(image_aux.getdata())#variable data to get value's pixel
+    image_aux.close()
+    #print(data)#print matrix of pixels with values RGB
+    matriz = np.array(data)
+    #print("Rojo")
+    #print(matriz[:, 0])
+    #print("Azul")
+    #print(matriz[:, 1])
+    #print("Verde")
+    #print(matriz[:, 2])
+    nuevo=matriz.reshape(width, height)
+    print(nuevo)
+    gethistogram(image_aux)
+
+
+
+
+def grayconvert(imagen):
+    gray_image = cv2.cvtColor(imagen,cv2.COLOR_BGR2GRAY)#esta función convierte la imagen original en grises
+    cv2.imshow("Imagen en grises",gray_image)#esta la muestra
+    cv2.waitKey(0)
+    cv2.imwrite("grayimage.jpg",gray_image)#this line saves the new image in grayscale
+    imagengris = cv2.imread('grayimage.jpg', 1)  # Reading image
+    height, width, channels = imagengris.shape#obtención de datos de imagen de gris
+
+    get_data(height,width,channels)#llamada a funcion para obtener datos de matriz
+
+
+def gethistogram(image_aux):
+    img = cv2.imread('grayimage.jpg',1)
+    hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+    plt.plot(hist, color='red')
+    plt.xlabel('Niveles de brillo')
+    plt.ylabel('Cantidad de Píxeles')
+    plt.show()
+
+    cv2.destroyAllWindows()
+
+def doing_matrix(height,width):
+    original_matriz = []
+    for i in range(height):#fill matrix of zeros
+        original_matriz.append([0] * width)  # Matriz has been created
+
+    #next lines are commented, they are just for print matrix
+    # for i in range(height):
+    #   for j in range(width):
+    #       print(original_matriz[i][j], end=" ")
+    #   print()
+
+imagen=cv2.imread('Imagen7.jpg',1)#Reading image
+cv2.imshow("Original",imagen)
+height, width,channels = imagen.shape #Here we are declaring three variables to obtain size data of image
+print("Valores originales de la imagen")
+print(height, width, channels)#Printing it
+cv2.waitKey(0)#Show image
+cv2.destroyAllWindows()
+
+grayconvert(imagen)
