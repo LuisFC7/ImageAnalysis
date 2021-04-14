@@ -1,0 +1,18 @@
+def get_data(height,width,channels):
+
+    image_aux = Image.open("grayimage.jpg")#image_aux means a second object of imagen
+    data = list(image_aux.getdata())#variable data to get value's pixel
+    image_aux.close()
+    #print(data)#print matrix of pixels with values RGB
+    matriz = np.array(data)
+    #print("Rojo")
+    #print(matriz[:, 0])
+    #print("Azul")
+    #print(matriz[:, 1])
+    #print("Verde")
+    #print(matriz[:, 2])
+    nuevo=matriz.reshape(width, height)
+    print(nuevo)
+    gethistogram(image_aux)
+
+#reshape organiza todo en una matriz
