@@ -1,0 +1,64 @@
+import cv2#Library to manipulate images
+import numpy as np
+import array
+import binascii
+from PIL import Image#library to manipulate an image
+import matplotlib.pyplot as plt
+
+def get_data(height,width,channels):
+
+    image_aux = Image.open("Imagen7.jpg")#image_aux means a second object of imagen
+    data = list(image_aux.getdata())#variable data to get value's pixel
+    image_aux.close()
+    #print(data)#print matrix of pixels with values RGB
+    matriz = np.array(data)
+    #grayconvert(nueva)
+    #gethistogram(image_aux)
+    total=height*width
+    arrayT=[]
+    #conversion a grises hecha
+    for i in range(total):
+        arrayT.append(int(matriz[i][0] + matriz[i][1] + matriz[i][2]) // 3)
+
+    matrizaux=np.array(arrayT)#se creo una matriz aux para copiar los datos de arrayT(gris)
+    matrizT=matrizaux.reshape(height, width)#matrizT convirtio matrizaux a una matriz de dimensiones m*n
+    print(matrizT)
+
+    grayconvert(matrizT)
+
+
+def grayconvert(matrizT):
+    print(matrizT)
+    pil_image = Image.fromarray(matrizT)
+    pil_image.show()
+
+def gethistogram(image_aux):
+    img = cv2.imread('grayimage.jpg',1)
+    hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+    plt.plot(hist, color='red')
+    plt.xlabel('Niveles de brillo')
+    plt.ylabel('Cantidad de Píxeles')
+    plt.show()
+
+    cv2.destroyAllWindows()
+
+def doing_matrix(height,width):
+    original_matriz = []
+    for i in range(height):#fill matrix of zeros
+        original_matriz.append([0] * width)  # Matriz has been created
+
+    #next lines are commented, they are just for print matrix
+    # for i in range(height):
+    #   for j in range(width):
+    #       print(original_matriz[i][j], end=" ")
+    #   print()
+
+imagen=cv2.imread('Imagen7.jpg',1)#Reading image
+cv2.imshow("Original",imagen)
+height, width,channels = imagen.shape #Here we are declaring three variables to obtain size data of image
+print("Valores originales de la imagen")
+print(height, width, channels)#Printing it
+cv2.waitKey(0)#Show image
+cv2.destroyAllWindows()
+
+get_data(height, width, channels)
