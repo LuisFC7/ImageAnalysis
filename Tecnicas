@@ -1,0 +1,48 @@
+#Desplazamiento
+def displacement(img,displace):
+    imag = img.copy()
+    imag.astype(dtype=np.int32) #convertir a 32 bits
+    height = imag.shape[0]
+    width = imag.shape[1]
+    try:
+        for h in range(height):
+            for w in range(width):
+                imag[h][w][0] += displace
+                imag[h][w][1] += displace
+                imag[h][w][2] += displace
+        imag[imag>255] = 255
+        imag[imag<0] = 0
+    except:
+        for h in range(h):
+            for w in range(width):
+                imag[h][w] += displace
+        imag[imag > 255] = 255
+        imag[imag < 0] = 0
+    return imag.astype(dtype=np.uint8)
+    print()
+    
+#Expansion
+def growth(imag,min,max):
+    image = imag.copy()
+    image.astype(dtype=np.int32)
+    height = imag.shape[0]
+    width = imag.shape[1]
+    try:
+        fmax = np.max(image)
+        fmin = np.min(image)
+        for h in range (height):
+            for w in range(width):
+                imag[h][w][0] = int(round(((max - min) / (fmax - fmin)) * (imag[h][w][0] - fmin) + min))
+                imag[h][w][1] = int(round(((max - min) / (fmax - fmin)) * (imag[h][w][1] - fmin) + min))
+                imag[h][w][2] = int(round(((max - min) / (fmax - fmin)) * (imag[h][w][2] - fmin) + min))
+        imag[imag > 255] = 255
+        imag[imag < 0] = 0
+    except:
+        fmax = np.max(image)
+        fmin = np.mix(image)
+        for h in range(height):
+            for w in range(width):
+                imag[h][w] = int(round(((max - min) / (fmax - fmin)) * (imag[h][w] - fmin) + min))
+            imag[imag > 255] = 255
+            imag[imag < 0] = 0
+    return image.astype(dtype=np.uint8)
