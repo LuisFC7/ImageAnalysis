@@ -4,6 +4,8 @@ import array
 import binascii
 from PIL import Image#library to manipulate an image
 import matplotlib.pyplot as plt
+import scipy
+from PIL import Image, ImageOps
 
 def get_data(height,width,channels):
 
@@ -11,32 +13,34 @@ def get_data(height,width,channels):
     data = list(image_aux.getdata())#variable data to get value's pixel
     image_aux.close()
     #print(data)#print matrix of pixels with values RGB
+    #histograma de imagen original.
+    gethistogram(image_aux)
     matriz = np.array(data)
-    #grayconvert(nueva)
-    #gethistogram(image_aux)
+
     total=height*width
     arrayT=[]
     #conversion a grises hecha
     for i in range(total):
         arrayT.append(int(matriz[i][0] + matriz[i][1] + matriz[i][2]) // 3)
 
-    matrizaux=np.array(arrayT)#se creo una matriz aux para copiar los datos de arrayT(gris)
+    matrizaux=np.array(arrayT)#se creo una matriz aux para copiar los datos de arrayT(lista gris)
     matrizT=matrizaux.reshape(height, width)#matrizT convirtio matrizaux a una matriz de dimensiones m*n
-    print(matrizT)
 
     grayconvert(matrizT)
 
-
 def grayconvert(matrizT):
+    #solo imprime la matriz T como imagen en grises
     print(matrizT)
-    pil_image = Image.fromarray(matrizT)
-    pil_image.show()
+    imgray = Image.fromarray(matrizT)
+    imgray.show("CopiaGrises")
     #guarda la imagen en gris
-    imgray.save('Grises.jpg')
+    imgray.save('Grises.png')
+   
+
 
 
 def gethistogram(image_aux):
-    img = cv2.imread('grayimage.jpg',1)
+    img = cv2.imread('Imagen7.jpg',1)
     hist = cv2.calcHist([img], [0], None, [255], [0, 255])
     plt.plot(hist, color='red')
     plt.xlabel('Niveles de brillo')
