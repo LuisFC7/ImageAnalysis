@@ -1,0 +1,25 @@
+def get_data(height, width, channels):
+    image_aux = Image.open('Imagen7.jpg')  # image_aux means a second object of imagen
+    # obtiene datos de imagen en grises para operarlos
+    data = list(image_aux.getdata())  # variable data to get value's pixel
+    #Inverse color
+    #datainverse = [(255 - data[x][0], 255 - data[x][1], 255 - data[x][2]) for x in range(len(data))]
+    #iminverse = Image.new('RGB', image_aux.size)
+    #iminverse.putdata(datainverse)
+    #iminverse.save('Inverse.jpg')
+    #iminverse.close()
+    #Inverse byn
+    image_aux.close()
+    datainverse = [255 - x for x in data]
+    iminverse = Image.new('RGB', image_aux.size)
+    iminverse.putdata(datainverse)
+    iminverse.save('Inverse.jpg')
+    iminverse.show()
+    iminverse.close()
+
+    #print(data)#print matrix of pixels with values RGB
+    matriz = np.array(data)  # copia los datos de la lista en un array
+    gethistogram(data)
+
+    gethistogram(image_aux)# histograma de imagen en grises
+    gammacorrection(matriz, height, width)
