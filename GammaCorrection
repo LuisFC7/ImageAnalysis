@@ -1,0 +1,113 @@
+import cv2  # Library to manipulate images
+import numpy as np
+import array
+import binascii
+from PIL import Image  # library to manipulate an image
+import matplotlib.pyplot as plt
+import scipy
+from PIL import Image, ImageOps
+
+
+def get_data(height, width, channels):
+    image_aux = Image.open("Imagen7.jpg")  # image_aux means a second object of imagen
+    data = list(image_aux.getdata())  # variable data to get value's pixel
+    image_aux.close()
+    #funcion que imprime el histograma de la imagen original
+    gethistogram()
+    #funcion que convierte la imagen original a escala de grises
+    grayconvert()
+    #funcion que aplica correcion gamma a imagen original
+    gammacorrection()
+
+def grayconvert():
+    matim = Image.open("Imagen7.jpg")
+    matrizim = np.array(matim)
+
+    matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
+    for n in (range(matrizim.shape[0])):
+        for m in (range(matrizim.shape[1])):
+            R = 0
+            G = 0
+            B = 0
+            ope = 0
+            for i in (range(matrizim.shape[2])):
+                if i == 0:
+                    R = matrizim[n, m, i] * 0.3
+                    ope = ope + R
+                elif i == 1:
+                    G = matrizim[n, m, i] * 0.59
+                    ope = ope + G
+                else:
+                    B = matrizim[n, m, i] * 0.11
+                    ope = ope + B
+            matrizeros[n, m] = ope
+
+    cv2.imwrite("Copia-Grises.jpg", matrizeros)
+    imagris = cv2.imread("Copia-Grises.jpg")
+    cv2.imshow("Grises", imagris)
+    cv2.waitKey(0)
+    #llamada para que se grafique el histograma de la iamgen en grises
+    gethistogramgray()
+
+def gammacorrection():
+    matim = Image.open("Imagen7.jpg")
+    matrizim = np.array(matim)
+
+    matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
+    for n in (range(matrizim.shape[0])):
+        for m in (range(matrizim.shape[1])):
+            R = 0
+            G = 0
+            B = 0
+            ope = 0
+            for i in (range(matrizim.shape[2])):
+                if i == 0:
+                    R = 120*(pow((matrizim[n, m, i]/120),0.5))
+                    ope = ope + R
+                elif i == 1:
+                    G = 120*(pow((matrizim[n, m, i]/120),0.5))
+                    ope = ope + G
+                else:
+                    B = 120*(pow((matrizim[n, m, i]/120),0.5))
+                    ope = ope + B
+            matrizeros[n, m] = ope
+
+    cv2.imwrite("Correcion-gamma.jpg", matrizeros)
+    gamma = cv2.imread("Correcion-gamma.jpg")
+    cv2.imshow("Gamma", gamma)
+    cv2.waitKey(0)
+    # llamada para que se grafique el histograma de la iamgen en grises
+
+
+
+
+
+def gethistogram():
+    img = cv2.imread('Imagen7.jpg')
+    color = ('b', 'g', 'r')
+    for i, c in enumerate(color):
+        hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+        plt.plot(hist, color=c)
+        plt.xlim([0, 256])
+    plt.show()
+
+    cv2.destroyAllWindows()
+
+def gethistogramgray():
+    img = cv2.imread('Copia-Grises.jpg', 1)
+    hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+    plt.plot(hist, color='gray')
+    plt.xlabel('Niveles de brillo')
+    plt.ylabel('Cantidad de Píxeles')
+    plt.show()
+    cv2.destroyAllWindows()
+
+imagen = cv2.imread('Imagen7.jpg', 1)  # Reading image
+cv2.imshow("Original", imagen)
+height, width, channels = imagen.shape  # Here we are declaring three variables to obtain size data of image
+print("Valores originales de la imagen")
+print(height, width, channels)  # Printing it
+cv2.waitKey(0)  # Show image
+cv2.destroyAllWindows()
+
+get_data(height, width, channels)
