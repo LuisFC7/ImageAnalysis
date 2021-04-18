@@ -18,6 +18,8 @@ def get_data(height, width, channels):
     grayconvert()
     #funcion que aplica correcion gamma a imagen original
     gammacorrection()
+    #funcion que guarda el histograma de gamma
+    gethistogramgamma()
 
 def grayconvert():
     matim = Image.open("Imagen7.jpg")
@@ -46,38 +48,20 @@ def grayconvert():
     imagris = cv2.imread("Copia-Grises.jpg")
     cv2.imshow("Grises", imagris)
     cv2.waitKey(0)
-    #llamada para que se grafique el histograma de la iamgen en grises
+    # llamada para que se grafique el histograma de la iamgen en grises
     gethistogramgray()
 
+
 def gammacorrection():
-    matim = Image.open("Imagen7.jpg")
-    matrizim = np.array(matim)
-
-    matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
-    for n in (range(matrizim.shape[0])):
-        for m in (range(matrizim.shape[1])):
-            R = 0
-            G = 0
-            B = 0
-            ope = 0
-            for i in (range(matrizim.shape[2])):
-                if i == 0:
-                    R = (2*(pow((matrizim[n, m, i]/2), 0.8)))
-                    ope = ope + R
-                elif i == 1:
-                    G = (2*(pow((matrizim[n, m, i]/2), 0.8)))
-                    ope = ope + G
-                else:
-                    B = (2*(pow((matrizim[n, m, i]/2), 0.8)))
-                    ope = ope + B
-            matrizeros[n, m] = ope
-
-    cv2.imwrite("Correcion-gamma.jpg", matrizeros)
-    gamma = cv2.imread("Correcion-gamma.jpg")
-    cv2.imshow("Gamma", gamma)
+    imagen = cv2.imread("Imagen7.jpg")  # lectura de imagen
+    gamma=0.5 #gamma con valor < 1 aclara imagen y con valor >1 oscurece la imagen
+    variable = 255 #variable representa el valor de lambda
+    aux = (imagen / variable) #division entre valor del pixel(imagen) y varible(lambda)
+    gamma2 = np.array(variable * np.power(aux, gamma), dtype='uint8')#función de correcion gamma implementada
+    cv2.imshow('gamma = 0.5', gamma2)#se muestra
+    cv2.imwrite("Correcion-gamma.jpg", gamma2)#se imprime
     cv2.waitKey(0)
-    # llamada para que se grafique el histograma de la iamgen en grises
-    gethistogramgamma()
+    cv2.destroyAllWindows()
 
 
 def gethistogram():
@@ -120,3 +104,4 @@ cv2.waitKey(0)  # Show image
 cv2.destroyAllWindows()
 
 get_data(height, width, channels)
+
