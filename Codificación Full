@@ -23,7 +23,8 @@ def get_data(height, width, channels):
     #desplazamiento
     #displacement()
     #expansion
-    expansion()
+    #expansion()
+    contraccion()
 
 def grayconvert():
     matim = Image.open("Imagen7.jpg")
@@ -97,8 +98,8 @@ def displacement():
 def expansion():
     imagen=cv2.imread("Copia-Grises.jpg")
     matrim = np.array(imagen)
-    ma=20
-    me=2
+    ma=100#valor hasta donde se expande el histograma
+    me=25#limite desde donde parte
 
     try:
         vmax=np.max(matrim)
@@ -107,8 +108,8 @@ def expansion():
             for j in range(matrim.shape[1]):
                 matrim[i][j][0]=int(round(((matrim[i][j][0]-vmin)/(vmax-vmin))*(ma-me)+me))
                 matrim[i][j][1]=int(round(((matrim[i][j][1]-vmin)/(vmax-vmin))*(ma-me)+me))
-                matrim[i][j][2]=int(round(((matrim[i][j][2]-vmin)/(vmax-vmin))*(ma-me)+me))
-        matrim[matrim > 255]=255
+                matrim[i][j][2]=int(round(((matrim[i][j][2]-vmin)/(vmax-vmin))*(ma-me)+me))#formula aplicada
+        matrim[matrim > 255]=255#condiciones
         matrim[matrim < 0]=0
     except:
         for i in range(matrim.shape[0]):
@@ -122,6 +123,36 @@ def expansion():
     cv2.imshow("Expansión", des)
     cv2.imwrite("Expansion.jpg", des)
     gethistogramex()
+
+def contraccion():
+    imagen = cv2.imread("Copia-Grises.jpg")
+    maim = np.array(imagen)
+    height = maim.shape[0]
+    width = maim.shape[1]
+    max = 255
+    min = 0
+    try:
+        fmax = np.max(maim)
+        fmin = np.min(maim)
+        for i in range(height):
+            for j in range(width):
+                maim[i][j][0] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][0] - fmin) + min))
+                maim[i][j][1] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][1] - fmin) + min))
+                maim[i][j][2] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][2] - fmin) + min))
+        maim[maim > 255] = 255
+        maim[maim < 0] = 0
+    except:
+        fmax = np.max(maim)
+        fmin = np.min(maim)
+        for i in range(height):
+            for j in range(width):
+                maim[i][j] = int(round(((maim[i][j]) / (fmax - fmin)) * (maim[i][j] - fmin) + min))
+        maim[maim > 255] = 255
+        maim[maim < 0] = 0
+    imagencon = np.array(maim, dtype="uint8")
+    cv2.imshow("Contraccion", imagencon)
+    cv2.imwrite("Contraccion.jpg", imagencon)
+    gethistogramcon()
 
 
 def gethistogram():
@@ -172,6 +203,15 @@ def gethistogramex():
     plt.show()
     cv2.destroyAllWindows()
 
+def gethistogramcon():
+    img = cv2.imread('Contraccion.jpg', 1)
+    hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+    plt.plot(hist, color='gray')
+    plt.xlabel('Niveles de brillo')
+    plt.ylabel('Cantidad de Píxeles')
+    plt.show()
+    cv2.destroyAllWindows()
+
 imagen = cv2.imread('Imagen7.jpg', 1)  # Reading image
 cv2.imshow("Original", imagen)
 height, width, channels = imagen.shape  # Here we are declaring three variables to obtain size data of image
@@ -181,3 +221,4 @@ cv2.waitKey(0)  # Show image
 cv2.destroyAllWindows()
 
 get_data(height, width, channels)
+
