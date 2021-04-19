@@ -1,0 +1,38 @@
+def contraccion():
+    imagen = cv2.imread("Copia-Grises.jpg")
+    maim = np.array(imagen)
+    height = maim.shape[0]
+    width = maim.shape[1]
+    max = 255
+    min = 0
+    try:
+        fmax = np.max(maim)
+        fmin = np.min(maim)
+        for i in range(height):
+            for j in range(width):
+                maim[i][j][0] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][0] - fmin) + min))
+                maim[i][j][1] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][1] - fmin) + min))
+                maim[i][j][2] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][2] - fmin) + min))
+        maim[maim > 255] = 255
+        maim[maim < 0] = 0
+    except:
+        fmax = np.max(maim)
+        fmin = np.min(maim)
+        for i in range(height):
+            for j in range(width):
+                maim[i][j] = int(round(((maim[i][j]) / (fmax - fmin)) * (maim[i][j] - fmin) + min))
+        maim[maim > 255] = 255
+        maim[maim < 0] = 0
+    imagencon = np.array(maim, dtype="np.uint8")
+    cv2.imshow("Contraccion", imagencon)
+    cv2.imwrite("Contraccion.jpg", imagencon)
+    gethistogramcon()
+    
+    def gethistogramcon():
+    img = cv2.imread('Contraccion.jpg', 1)
+    hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+    plt.plot(hist, color='gray')
+    plt.xlabel('Niveles de brillo')
+    plt.ylabel('Cantidad de Píxeles')
+    plt.show()
+    cv2.destroyAllWindows()
