@@ -13,15 +13,17 @@ def get_data(height, width, channels):
     data = list(image_aux.getdata())  # variable data to get value's pixel
     image_aux.close()
     #funcion que imprime el histograma de la imagen original
-    gethistogram()
+    #gethistogram()
     #funcion que convierte la imagen original a escala de grises
-    grayconvert()
+    #grayconvert()
     #funcion que aplica correcion gamma a imagen original
-    gammacorrection()
+    #gammacorrection()
     #funcion que guarda el histograma de gamma
-    gethistogramgamma()
+    #gethistogramgamma()
     #desplazamiento
-    displacement()
+    #displacement()
+    #expansion
+    expansion()
 
 def grayconvert():
     matim = Image.open("Imagen7.jpg")
@@ -92,6 +94,36 @@ def displacement():
     cv2.imwrite("Desplazamiento.jpg",des)
     gethistogramdes()
 
+def expansion():
+    imagen=cv2.imread("Copia-Grises.jpg")
+    matrim = np.array(imagen)
+    ma=20
+    me=2
+
+    try:
+        vmax=np.max(matrim)
+        vmin=np.min(matrim)
+        for i in range(matrim.shape[0]):
+            for j in range(matrim.shape[1]):
+                matrim[i][j][0]=int(round(((matrim[i][j][0]-vmin)/(vmax-vmin))*(ma-me)+me))
+                matrim[i][j][1]=int(round(((matrim[i][j][1]-vmin)/(vmax-vmin))*(ma-me)+me))
+                matrim[i][j][2]=int(round(((matrim[i][j][2]-vmin)/(vmax-vmin))*(ma-me)+me))
+        matrim[matrim > 255]=255
+        matrim[matrim < 0]=0
+    except:
+        for i in range(matrim.shape[0]):
+            for j in range(matrim.shape[1]):
+                matrim[i][j] =int(round(((matrim[i][j]-vmin)/(vmax-vmin))*(ma-me)+me))
+            matrim[matrim > 255] = 255
+            matrim[matrim < 0] = 0
+
+
+    des = np.array(matrim, dtype="uint8")
+    cv2.imshow("Expansión", des)
+    cv2.imwrite("Expansion.jpg", des)
+    gethistogramdes()
+
+
 def gethistogram():
     img = cv2.imread('Imagen7.jpg')
     color = ('b', 'g', 'r')
@@ -142,4 +174,3 @@ cv2.waitKey(0)  # Show image
 cv2.destroyAllWindows()
 
 get_data(height, width, channels)
-
