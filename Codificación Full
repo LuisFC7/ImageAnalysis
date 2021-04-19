@@ -121,7 +121,7 @@ def expansion():
     des = np.array(matrim, dtype="uint8")
     cv2.imshow("Expansión", des)
     cv2.imwrite("Expansion.jpg", des)
-    gethistogramdes()
+    gethistogramex()
 
 
 def gethistogram():
@@ -163,7 +163,14 @@ def gethistogramdes():
     cv2.destroyAllWindows()
 
 
-
+def gethistogramex():
+    img = cv2.imread('Expansion.jpg', 1)
+    hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+    plt.plot(hist, color='gray')
+    plt.xlabel('Niveles de brillo')
+    plt.ylabel('Cantidad de Píxeles')
+    plt.show()
+    cv2.destroyAllWindows()
 
 imagen = cv2.imread('Imagen7.jpg', 1)  # Reading image
 cv2.imshow("Original", imagen)
