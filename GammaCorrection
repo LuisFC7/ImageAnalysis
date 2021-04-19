@@ -20,6 +20,8 @@ def get_data(height, width, channels):
     gammacorrection()
     #funcion que guarda el histograma de gamma
     gethistogramgamma()
+    #desplazamiento
+    displacement()
 
 def grayconvert():
     matim = Image.open("Imagen7.jpg")
@@ -63,6 +65,32 @@ def gammacorrection():
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+def displacement():
+    imagen = cv2.imread("Copia-Grises.jpg")
+    #imagen.astype(dtype=np.int32)  # convertir a 32 bits
+    matim=np.array(imagen)
+    #height = imagen.shape[0]
+    #width = imagen.shape[1]
+    desplazamiento = -20
+    try:
+        for i in range(matim.shape[0]):
+            for j in range(matim.shape[1]):
+                matim[i][j][0] += desplazamiento#acceden a la posicion de los valores del pixel y los recorre
+                matim[i][j][1] += desplazamiento
+                matim[i][j][2] += desplazamiento
+        matim[matim > 255] = 255#condicion que si el nuevo desplazamiento supera el valor 255 lo deje como 255 max
+        matim[matim < 0] = 0#si es menor a 0 lo iguala a 0
+    except:
+        for i in range(matim.shape[0]):#sentencia de error
+            for j in range(matim.shape[1]):
+                matim[i][j] += desplazamiento
+        matim[matim > 255] = 255
+        matim[matim < 0] = 0
+
+    des=np.array(matim,dtype="uint8")
+    cv2.imshow("Desplazamiento",des)
+    cv2.imwrite("Desplazamiento.jpg",des)
+    gethistogramdes()
 
 def gethistogram():
     img = cv2.imread('Imagen7.jpg')
@@ -92,6 +120,16 @@ def gethistogramgamma():
     plt.ylabel('Cantidad de Píxeles')
     plt.show()
     cv2.destroyAllWindows()
+
+def gethistogramdes():
+    img = cv2.imread('Desplazamiento.jpg', 1)
+    hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+    plt.plot(hist, color='gray')
+    plt.xlabel('Niveles de brillo')
+    plt.ylabel('Cantidad de Píxeles')
+    plt.show()
+    cv2.destroyAllWindows()
+
 
 
 
