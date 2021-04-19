@@ -23,7 +23,7 @@ def contraccion():
                 maim[i][j] = int(round(((maim[i][j]) / (fmax - fmin)) * (maim[i][j] - fmin) + min))
         maim[maim > 255] = 255
         maim[maim < 0] = 0
-    imagencon = np.array(maim, dtype="np.uint8")
+    imagencon = np.array(maim, dtype="uint8")
     cv2.imshow("Contraccion", imagencon)
     cv2.imwrite("Contraccion.jpg", imagencon)
     gethistogramcon()
