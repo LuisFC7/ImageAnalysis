@@ -1,0 +1,10 @@
+carpeta=Tk()#declaración elemento tipo tk
+
+#funcion para seleccionar imagen desde interfaz
+def selectimage():
+    imagen=filedialog.askopenfilename(title="Seleccionar Imagen")#declaración de la ventana
+    print(imagen)#impresión de la ventana
+
+Button(carpeta, text="Abrir Imagen", command=selectimage).pack()#declaracion de boton
+
+carpeta.mainloop()#processloop
