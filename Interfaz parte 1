@@ -1,0 +1,40 @@
+from tkinter import Tk, Label, Button, Checkbutton, Frame
+from tkinter import messagebox
+
+class Ventana:
+    def __init__(self, master):
+        self.master = master
+        master.title("Imagen Analysis")
+        self.etiqueta = Label(master, text="Problema de brillo")
+        self.etiqueta.pack()
+        self.abririmagen = Button(master, text="Imagen a solucionar", command=self.imagen)
+        self.abririmagen.pack()
+        #self.modificar = Checkbutton(master, text="Modificacion", command=self.get_data())
+        #self.modificar.pack()
+        self.his = Button(master, text="Histograma", command=self.gethistogram())
+        self.his.pack()
+        self.botonCerrar = Button(master, text="Cerrar", command=master.quit)
+        self.botonCerrar.pack()
+    def imagen(self):
+        imagen = cv2.imread('C:\\Users\\52553\\Documents\\Image\\Imagen7.jpg', 1)  # Reading image
+        cv2.imshow("Tarea 7", imagen)
+
+    def gethistogram(self):
+        img = cv2.imread('C:\\Users\\52553\\Documents\\Image\\Imagen7.jpg')
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+
+        cv2.destroyAllWindows()
+
+
+window = Tk()
+Ventana = Ventana(window)
+window.config(bg="white")
+window.geometry('400x400')
+window.resizable(width=0, height=0)
+window.title("Image Analysis")
+window.mainloop()
