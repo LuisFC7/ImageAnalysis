@@ -1,0 +1,271 @@
+import cv2  # Library to manipulate images
+import numpy as np
+import array
+import binascii
+from PIL import Image  # library to manipulate an image
+import matplotlib.pyplot as plt
+import scipy
+from PIL import Image, ImageOps
+from tkinter import Tk, Label, Button, Checkbutton, Frame, filedialog
+from tkinter import messagebox
+from tkinter import *
+
+class Ventana:
+    def __init__(self, master):
+        self.vgamma=DoubleVar(value=0.1)#varible para cambiar valor de gamma
+        self.maxex=IntVar(value=0)
+        self.minex=IntVar(value=0)
+        self.maxcon=IntVar(value=0)
+        self.mincon=IntVar(value=0)
+        self.desplazamiento=IntVar(value=0)
+        self.master = master
+        master.title("Imagen Analysis")
+        self.etiqueta = Label(master, text="Problema de brillo")
+        self.etiqueta.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.etiqueta.config(bg="snow2", font=("Arial, 20"), )
+        self.abririmagen = Button(master, text="Imagen a solucionar", command=self.imagen)
+        self.abririmagen.pack()
+        #self.abririmagen = Button(master, text="Imagen a solucionar", command=self.selectimage)
+        #self.abririmagen.pack()
+        self.his = Button(master, text="Histograma de la imagen", command=self.gethistogram)
+        self.his.pack()
+        self.etiq1 = Label(master, text="Imagen en Grises")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.gray = Button(master, text="Conversion a grises", command=self.grayconvert)
+        self.gray.pack()
+        self.hgray = Button(master, text="Histograma de la imagen en grises", command=self.gethistogramgray)
+        self.hgray.pack()
+        self.etiq1 = Label(master, text="Opción gamma")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.valorgamma=Entry(master, textvariable=self.vgamma, width=10).pack()
+        self.gamma = Button(master, text="Funcion gamma", command=self.gammacorrection)
+        self.gamma.pack()
+        self.hgamma = Button(master, text="Histograma de la funcion", command=self.gethistogramgamma)
+        self.hgamma.pack()
+        self.etiq1 = Label(master, text="Opción Desplazamiento")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.dise = Entry(master, textvariable=self.desplazamiento, width=10).pack()
+        self.dis = Button(master, text="Desplazamiento de la imagen", command=self.displacement)
+        self.dis.pack()
+        self.hdis = Button(master, text="Histograma del desplazamiento de la imagen", command=self.gethistogramdes)
+        self.hdis.pack()
+        self.etiq1 = Label(master, text="Opción Expansión")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.valormaex=Entry(master, textvariable=self.maxex, width=10).pack()
+        self.valorminex=Entry(master, textvariable=self.minex, width=10).pack()
+        self.ex = Button(master, text="Expansión de la imagen", command=self.expansion)
+        self.ex.pack()
+        self.hex = Button(master, text="Histograma de la expansion de la imagen", command=self.gethistogramex)
+        self.hex.pack()
+        self.etiq1 = Label(master, text="Opción Contracción")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.valormaco = Entry(master, textvariable=self.maxcon, width=10).pack()
+        self.valorminco = Entry(master, textvariable=self.mincon, width=10).pack()
+        self.con = Button(master, text="Contracción de la imagen", command=self.contraccion)
+        self.con.pack()
+        self.hcon = Button(master, text="Histograma de la contracción de la imagen", command=self.gethistogramcon)
+        self.hcon.pack()
+        self.botonCerrar = Button(master, text="Cerrar", command=master.quit)
+        self.botonCerrar.pack()
+
+    # funcion para seleccionar imagen desde interfaz
+    #def selectimage(self):
+     #   imagen = filedialog.askopenfilename(title="Seleccionar Imagen")  # declaración de la ventana
+      #  print(imagen)  # impresión de la ventana
+    def imagen(self):
+        imagen = cv2.imread('Imagen7.jpg', 1)  # Reading image
+        cv2.imshow("Tarea 7", imagen)
+
+
+    def grayconvert(self):
+        matim = Image.open("Imagen7.jpg")
+        matrizim = np.array(matim)
+        matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
+        for n in (range(matrizim.shape[0])):
+            for m in (range(matrizim.shape[1])):
+                R = 0
+                G = 0
+                B = 0
+                ope = 0
+                for i in (range(matrizim.shape[2])):
+                    if i == 0:
+                        R = matrizim[n, m, i] * 0.3
+                        ope = ope + R
+                    elif i == 1:
+                        G = matrizim[n, m, i] * 0.59
+                        ope = ope + G
+                else:
+                    B = matrizim[n, m, i] * 0.11
+                    ope = ope + B
+                    matrizeros[n, m] = ope
+
+        cv2.imwrite("Copia-Grises.jpg", matrizeros)
+        imagris = cv2.imread("Copia-Grises.jpg")
+        cv2.imshow("Grises", imagris)
+        cv2.waitKey(0)
+        # llamada para que se grafique el histograma de la iamgen en grises
+        #gethistogramgray(self)
+
+    def gammacorrection(self):
+        imagen = cv2.imread("Imagen7.jpg")  # lectura de imagen
+        gamma = float(self.vgamma.get())  # gamma con valor < 1 aclara imagen y con valor >1 oscurece la imagen
+        variable = 255  # variable representa el valor de lambda
+        aux = (imagen / variable)  # division entre valor del pixel(imagen) y varible(lambda)
+        gamma2 = np.array(variable * np.power(aux, gamma), dtype='uint8')  # función de correcion gamma implementada
+        cv2.imshow('gamma = 0.5', gamma2)  # se muestra
+        cv2.imwrite("Correcion-gamma.jpg", gamma2)  # se imprime
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    def displacement(self):
+        imagen = cv2.imread("Copia-Grises.jpg")
+        # imagen.astype(dtype=np.int32)  # convertir a 32 bits
+        matim = np.array(imagen)
+        # height = imagen.shape[0]
+        # width = imagen.shape[1]
+        desplazamiento = int(self.desplazamiento.get())
+        try:
+            for i in range(matim.shape[0]):
+                for j in range(matim.shape[1]):
+                    matim[i][j][0] += desplazamiento  # acceden a la posicion de los valores del pixel y los recorre
+                    matim[i][j][1] += desplazamiento
+                    matim[i][j][2] += desplazamiento
+            matim[
+                matim > 255] = 255  # condicion que si el nuevo desplazamiento supera el valor 255 lo deje como 255 max
+            matim[matim < 0] = 0  # si es menor a 0 lo iguala a 0
+        except:
+            for i in range(matim.shape[0]):  # sentencia de error
+                for j in range(matim.shape[1]):
+                    matim[i][j] += desplazamiento
+            matim[matim > 255] = 255
+            matim[matim < 0] = 0
+
+        des = np.array(matim, dtype="uint8")
+        cv2.imshow("Desplazamiento", des)
+        cv2.imwrite("Desplazamiento.jpg", des)
+        #gethistogramdes()
+
+    def expansion(self):
+        imagen = cv2.imread("Copia-Grises.jpg")
+        matrim = np.array(imagen)
+        ma = int(self.maxex.get())
+        me = int(self.minex.get())
+
+        try:
+            vmax = np.max(matrim)
+            vmin = np.min(matrim)
+            for i in range(matrim.shape[0]):
+                for j in range(matrim.shape[1]):
+                    matrim[i][j][0] = int(round(((matrim[i][j][0] - vmin) / (vmax - vmin)) * (ma - me) + me))
+                    matrim[i][j][1] = int(round(((matrim[i][j][1] - vmin) / (vmax - vmin)) * (ma - me) + me))
+                    matrim[i][j][2] = int(round(((matrim[i][j][2] - vmin) / (vmax - vmin)) * (ma - me) + me))
+            matrim[matrim > 255] = 255
+            matrim[matrim < 0] = 0
+        except:
+            vmax = np.max(matrim)
+            vmin = np.min(matrim)
+            for i in range(matrim.shape[0]):
+                for j in range(matrim.shape[1]):
+                    matrim[i][j] = int(round(((matrim[i][j] - vmin) / (vmax - vmin)) * (ma - me) + me))
+                matrim[matrim > 255] = 255
+                matrim[matrim < 0] = 0
+
+        des = np.array(matrim, dtype="uint8")
+        cv2.imshow("Expansión", des)
+        cv2.imwrite("Expansion.jpg", des)
+        #gethistogramex()
+
+    def contraccion(self):
+        imagen = cv2.imread("Copia-Grises.jpg")
+        maim = np.array(imagen)
+        height = maim.shape[0]
+        width = maim.shape[1]
+        max = int(self.maxcon.get())
+        min = int(self.mincon.get())
+        try:
+            fmax = np.max(maim)
+            fmin = np.min(maim)
+            for i in range(height):
+                for j in range(width):
+                    maim[i][j][0] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][0] - fmin) + min))
+                    maim[i][j][1] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][1] - fmin) + min))
+                    maim[i][j][2] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][2] - fmin) + min))
+            maim[maim > 255] = 255
+            maim[maim < 0] = 0
+        except:
+            fmax = np.max(maim)
+            fmin = np.min(maim)
+            for i in range(height):
+                for j in range(width):
+                    maim[i][j] = int(round(((maim[i][j]) / (fmax - fmin)) * (maim[i][j] - fmin) + min))
+            maim[maim > 255] = 255
+            maim[maim < 0] = 0
+        imagencon = np.array(maim, dtype="uint8")
+        cv2.imshow("Contraccion", imagencon)
+        cv2.imwrite("Contraccion.jpg", imagencon)
+        #gethistogramcon()
+
+    def gethistogram(self):
+        img = cv2.imread('Imagen7.jpg')
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramgray(self):
+        img = cv2.imread('Copia-Grises.jpg', 1)
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramgamma(self):
+        img = cv2.imread('Correcion-gamma.jpg', 1)
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramdes(self):
+        img = cv2.imread('Desplazamiento.jpg', 1)
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramex(self):
+        img = cv2.imread('Expansion.jpg', 1)
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramcon(self):
+        img = cv2.imread('Contraccion.jpg', 1)
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+
+window = Tk()
+Ventana = Ventana(window)
+window.config(bg="LightBlue1")
+window.geometry('600x700')
+window.resizable(width=0, height=0)
+window.title("Image Analysis")
+window.iconbitmap("Icon.ico")
+window.mainloop()
