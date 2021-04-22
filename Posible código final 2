@@ -95,7 +95,9 @@ class Ventana:
                     ope = ope + B
                     matrizeros[n, m] = ope
 
-        cv2.imwrite("Copia-Grises.jpg", matrizeros)
+        aux=np.array(matrizeros, dtype="uint8")
+        cv2.imshow("Grises",aux)
+        cv2.imwrite("Copia-Grises.jpg", aux)
         imagris = cv2.imread("Copia-Grises.jpg")
         cv2.waitKey(0)
 
@@ -115,12 +117,12 @@ class Ventana:
 
     def displacement(self):
         global ima, imdes
-        imagen = cv2.imread("Copia-Grises.jpg")
+        imagen = cv2.imread(ima)
         # imagen.astype(dtype=np.int32)  # convertir a 32 bits
         matim = np.array(imagen)
         # height = imagen.shape[0]
         # width = imagen.shape[1]
-        desplazamiento = -20
+        desplazamiento = int(self.desplazamiento.get())
         try:
             for i in range(matim.shape[0]):
                 for j in range(matim.shape[1]):
@@ -144,11 +146,11 @@ class Ventana:
         #gethistogramdes()
 
     def expansion(self):
-        global imex
-        imagen = cv2.imread("Copia-Grises.jpg")
+        global ima,imex
+        imagen = cv2.imread(ima)
         matrim = np.array(imagen)
-        ma = 20
-        me = 2
+        ma = int(self.maxex.get())
+        me = int(self.minex.get())
         try:
             vmax = np.max(matrim)
             vmin = np.min(matrim)
@@ -174,13 +176,13 @@ class Ventana:
         imex = cv2.imread("Expansion.jpg")
 
     def contraccion(self):
-        global imco
+        global ima,imco
         imagen = cv2.imread("Copia-Grises.jpg")
         maim = np.array(imagen)
         height = maim.shape[0]
         width = maim.shape[1]
-        max = 255
-        min = 0
+        max = int(self.maxcon.get())
+        min = int(self.mincon.get())
         try:
             fmax = np.max(maim)
             fmin = np.min(maim)
