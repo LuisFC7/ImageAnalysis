@@ -48,6 +48,7 @@ class Ventana:
         self.etiq1.config(bg="light coral", font=("Arial, 14"))
         self.textentrygamma = Label(master, text="Valor gamma: ")#label valor de gamma
         self.textentrygamma.place(x=40, y=310)
+        self.textentrygamma.config(bg="CadetBlue1")
         self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
         self.valorgamma=Entry(master, textvariable=self.vgamma, width=10)#entry gamma
         self.valorgamma.place(x=130, y=310)#entry gamma
@@ -62,6 +63,7 @@ class Ventana:
         self.etiq1.config(bg="pale green", font=("Arial, 14"))
         self.textdes = Label(master, text="Valor de desplazamiento")
         self.textdes.place(x=30, y=410)
+        self.textdes.config(bg="CadetBlue1")
         self.dise = Entry(master, textvariable=self.desplazamiento, width=10)
         self.dise.place(x=65, y=435)
         self.dis = Button(master, text="Desplazamiento de la imagen", command=self.displacement, height=1, width=35)
@@ -75,10 +77,12 @@ class Ventana:
         self.etiq1.config(bg="pink1", font=("Arial, 14"))
         self.textmax = Label(master, text="Valor Max")
         self.textmax.place(x=40, y=510)#label de expansion
+        self.textmax.config(bg="brown1")
         self.valormaex=Entry(master, textvariable=self.maxex, width=10)
         self.valormaex.place(x=107, y=510)
         self.textmin=Label(master, text="Valor min")
         self.textmin.place(x=40, y=533)
+        self.textmin.config(bg="CadetBlue1")
         self.valorminex=Entry(master, textvariable=self.minex, width=10)
         self.valorminex.place(x=107, y=533)
         self.ex = Button(master, text="Expansión de la imagen", command=self.expansion, height=1, width=32)
@@ -92,10 +96,12 @@ class Ventana:
         self.etiq1.config(bg="pale green", font=("Arial, 14"))
         self.textmaco=Label(master, text="Valor Max")
         self.textmaco.place(x=40, y=625)
+        self.textmaco.config(bg="brown1")
         self.valormaco = Entry(master, textvariable=self.maxcon, width=10)
         self.valormaco.place(x=107, y=625)
         self.textminco=Label(master, text="Valor min")
         self.textminco.place(x=40, y=650)
+        self.textminco.config(bg="CadetBlue1")
         self.valorminco = Entry(master, textvariable=self.mincon, width=10)
         self.valorminco.place(x=107, y=650)
         self.con = Button(master, text="Contracción de la Imagen", command=self.contraccion, height=1, width=32)
@@ -103,6 +109,7 @@ class Ventana:
         self.con.config(bg="khaki")
         self.hcon = Button(master, text="Histograma de la Contracción de la Imagen", command=self.gethistogramcon, height=1, width=32)
         self.hcon.pack()
+        self.hcon.config(bg="sandy brown")
         self.botonCerrar = Button(master, text="Cerrar", command=master.quit)
         self.botonCerrar.pack()
         self.botonCerrar.config(bg="light coral")
@@ -311,7 +318,7 @@ class Ventana:
 
 window = Tk()
 Ventana = Ventana(window)
-window.config(bg="LightBlue1")
+window.config(bg="black")
 window.geometry('600x700')
 window.resizable(width=0, height=0)
 window.title("Image Analysis")
