@@ -165,8 +165,8 @@ class Ventana:
         cv2.destroyAllWindows()
 
     def displacement(self):
-        global ima, imdes
-        imagen = cv2.imread(ima)
+        global imagris, imdes
+        imagen = imagris
         # imagen.astype(dtype=np.int32)  # convertir a 32 bits
         matim = np.array(imagen)
         # height = imagen.shape[0]
@@ -178,9 +178,8 @@ class Ventana:
                     matim[i][j][0] += desplazamiento  # acceden a la posicion de los valores del pixel y los recorre
                     matim[i][j][1] += desplazamiento
                     matim[i][j][2] += desplazamiento
-            matim[
-                matim > 255] = 255  # condicion que si el nuevo desplazamiento supera el valor 255 lo deje como 255 max
-            matim[matim < 0] = 0  # si es menor a 0 lo iguala a 0
+            matim[matim >= 255] = 255  # condicion que si el nuevo desplazamiento supera el valor 255 lo deje como 255 max
+            matim[matim <= 0] = 0  # si es menor a 0 lo iguala a 0
         except:
             for i in range(matim.shape[0]):  # sentencia de error
                 for j in range(matim.shape[1]):
@@ -192,11 +191,10 @@ class Ventana:
         cv2.imshow("Desplazamiento", des)
         cv2.imwrite("Desplazamiento.jpg", des)
         imdes = cv2.imread("Desplazamiento.jpg")
-        #gethistogramdes()
 
     def expansion(self):
-        global ima,imex
-        imagen = cv2.imread(ima)
+        global imagris,imex
+        imagen = imagris
         matrim = np.array(imagen)
         ma = int(self.maxex.get())
         me = int(self.minex.get())
@@ -225,8 +223,8 @@ class Ventana:
         imex = cv2.imread("Expansion.jpg")
 
     def contraccion(self):
-        global ima,imco
-        imagen = cv2.imread("Copia-Grises.jpg")
+        global imagris, imco
+        imagen = imagris
         maim = np.array(imagen)
         height = maim.shape[0]
         width = maim.shape[1]
