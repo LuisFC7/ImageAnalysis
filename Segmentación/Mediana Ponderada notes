@@ -1,0 +1,12 @@
+Weighted median
+First of all decide if we're gonna keep in mind borders of image
+Input: Image
+Algorithm:
+  
+  if we keep in mind borders
+    First expand matrix n+1 * m+1
+    fill with zeros
+    
+ By doing this, now
+ Apply mask 1/9[1 1 1, 1 1 1, 1 1 1] for every pixel excluding borders with value zero
+ After that Algorithm median its gonna be called for every píxel.
