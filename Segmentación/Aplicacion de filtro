@@ -1,0 +1,13 @@
+ def collecteight(self):
+        global imtr,listar,listag,listab
+        nimage=cv2.imread("Imagen7.jpg")#in this line must be used imtr as reading
+        matn=np.array(nimage)#convert image to array
+        #reading the lines and columns
+        for i in range(matn.shape[0]):
+            for j in range(matn.shape[1]):
+                matn[i][j][0]=matn[i+1][j+1][0]#get the first position
+                matn[i][j][1]=matn[i+1][j+1][1]
+                matn[i][j][2]=matn[i+1][j+1][2]
+                listar=[matn[i-1][j-1][0],matn[i][j-1][0],matn[i+1][j-1][0],matn[i-1][j][0],matn[i][j][0],matn[i+1][j][0],matn[i-1][j+1][0],matn[i][j+1][0],matn[i+1][j+1][0]]
+                listag=[matn[i-1][j-1][1],matn[i][j-1][1],matn[i+1][j-1][1],matn[i-1][j][1],matn[i][j][1],matn[i+1][j][1],matn[i-1][j+1][1],matn[i][j+1][1],matn[i+1][j+1][1]]
+                listab=[matn[i-1][j-1][2],matn[i][j-1][2],matn[i+1][j-1][2],matn[i-1][j][2],matn[i][j][2],matn[i+1][j][2],matn[i-1][j+1][2],matn[i][j+1][2],matn[i+1][j+1][2]]
