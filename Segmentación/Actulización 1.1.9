@@ -16,62 +16,57 @@ from tkinter import messagebox
 from tkinter import *
 
 #Para esta clase se esta utilizando herencia, subclase de Ventana
-class Menuprincipal():
+class Menuprincipal:
     def __init__(self, master):
         self.master=master
         master.title("Image Analysis")
         self.etiquetam = Label(master, text="Menu Principal")
         self.etiquetam.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
-        self.btnbrillo= Button(master, text="Ajuste de brillo", command=self.collecteight, height=1, width=27).pack()
+        self.btnbrillo= Button(master, text="Ajuste de brillo", command=self.convolucion, height=1, width=27).pack()
 
-    def makeborders(self):
-        nimage=cv2.imread("Imagen7.jpg")#lectura de imagen
-        height, width, channels = nimage.shape#obtención de ancho y alto de imagen
-        matriz=np.array(nimage)
-        for i in range(width+2):
-            for j in range(height+2):
-                if j==0:
-                    matriz[i][j]=0
-                elif j==height+2:
-                    matriz[i][j]=0
-                elif j!=0 and i==0 or j!=0 and i==width-1:
-                    matriz[i][j]=0
-
-        print(matriz)
-
-    def collecteight(self):
-        global imtr
-        imageread=cv2.imread("Imagen7.jpg")#in this line must be used imtr as reading
-        matn=np.array(imageread)#convert image to array
-        #reading the lines and columns
-        height, width, channels=imageread.shape
-        #matrizeros = np.zeros(height,width)
-        for n in (range(matn.shape[0])):
-            for m in (range(matn.shape[1])):
-                R=0
-                G=0
-                B=0
-                #first declarate an auxiliar variable to assign the value of position
-                for i in (range(matn.shape[2])):
-                    if i==0:
-                        #process of collecting data 8-neighborhood
-                        matn[n,m,i]=matn[n+1,m+1,i]
-                        R=((matn[n-1,m-1,i])+(matn[n-1,m,i])+(matn[n-1,m+1,i])+(matn[n,m-1,i])+(matn[n,m,i])+(matn[n,m+1,i])+(matn[n+1,m-1,i])+(matn[n+1,m,i])+(matn[n+1,m+1,i]))//9
-                        matn[n,m]=R
-                    elif i==1:
-                        G=((matn[n-1,m-1,i])+(matn[n-1,m,i])+(matn[n-1,m+1,i])+(matn[n,m-1,i])+(matn[n,m,i])+(matn[n,m+1,i])+(matn[n+1,m-1,i])+(matn[n+1,m,i])+(matn[n+1,m+1,i]))//9
-                        matn[n,m]=G
-                    else:
-                        B=((matn[n-1,m-1,i])+(matn[n-1,m,i])+(matn[n-1,m+1,i])+(matn[n,m-1,i])+(matn[n,m,i])+(matn[n,m+1,i])+(matn[n+1,m-1,i])+(matn[n+1,m,i])+(matn[n+1,m+1,i]))//9
-                        matn[n, m] = B
-
-                n=n-1
-
-
-        aux = np.array(matn, dtype="uint8")
-        cv2.imshow("Media", aux)
+    def convolucion(self):
+        imagen=cv2.imread("vato.jpg")
+        #matrizcon=np.array(imagen)
+        mataux=np.zeros((imagen.shape[0], imagen.shape[1]),dtype=int)
+        w=imagen.shape[0]-1
+        h=imagen.shape[1]-1
+        for n in range(1,w):
+            for m in range(1,h):
+                for t in range(1,imagen.shape[2]):
+                    media=(imagen.item(n-1,m-1,t)+imagen.item(n,m-1,t)+imagen.item(n+1,m-1,t)+imagen.item(n,m-1,t)+imagen.item(n,m,t)+imagen.item(n+1,m,t)+imagen.item(n-1,m+1,t)+imagen.item(n,m+1,t)+imagen.item(n+1,m+1,t))//9
+                    if media>255:
+                        media=255
+                    elif media<0:
+                        media=0
+                    mataux.itemset((n,m),media)
+        #return mataux
+        aux = np.array(mataux, dtype="uint8")
+        cv2.imshow("Grises", aux)
         cv2.imwrite("Media.jpg", aux)
         cv2.waitKey(0)
+
+    def convolucion2(self):
+        imagen=cv2.imread("Imagen7.jpg")
+        mataux=np.zeros((imagen.shape[0], imagen.shape[1]))
+        for n in range(1, imagen.shape[0]-1):
+            for m in range(1, imagen.shape[1]-1):
+                media=imagen[n,m]=(imagen[n-1,m-1]+imagen[n,m-1]+imagen[n+1,m-1]+imagen[n-1,m]+imagen[n,m]+imagen[n+1,m]+imagen[n-1,m+1]+imagen[n,m+1]+imagen[n+1,m+1])//9
+                if media>255:
+                    media=255
+                elif media<0:
+                    media=0
+                mataux=media
+
+        aux=np.array(mataux, dtype="uint8")
+        cv2.imshow("Media", aux)
+        cv2.imwrite("Media.jpg", aux)
+
+    def convolucion3(self):
+        img = cv2.imread("Imagen7.jpg")
+        blur = cv2.blur(img, (3, 3))
+        cv2.imshow("Media",blur)
+                    #mataux=matrizcon[n+1,m+1]#this line is to get position[1,1]
+                    #matrizcon[n,m]=(matrizcon[n-1,m-1]+matrizcon[n,m-1]+matrizcon[n+1,m-1]+matrizcon[n-1,m]+matrizcon[n,m]+matrizcon[n+1,m]+matrizcon[n-1,m+1]+matrizcon[n,m+1]+matrizcon[n+1,m+1])//9
 
 menu= Tk()
 Menuprincipal=Menuprincipal(menu)
