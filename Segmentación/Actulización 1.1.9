@@ -23,13 +23,44 @@ class Menuprincipal:
         self.etiquetam = Label(master, text="Menu Principal")
         self.etiquetam.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
         self.openimagen = Button(master, text="Seleccionar Imagen", command=self.openimage, height=1, width=20).pack()
-        self.btnbrillo= Button(master, text="Ajuste de brillo", command=self.mediaaritmetica, height=1, width=27).pack()
+        self.btnGris = Button(master, text="Conversión a gris", command=self.conversiongris, height=1, width=27).pack()
+        self.btnMarit = Button(master, text="Media Aritmetica", command=self.mediaaritmetica, height=1, width=27).pack()
+        self.btnMpon = Button(master, text="Media Ponderada", command=self.mediaponderada, height=1,width=27).pack()
 
     def openimage(self):
         global imagenl
-        imagenl = filedialog.askopenfilename(title="Seleccionar Imagen",filetypes=(("jpg files", ".jpg"), ("files png", ".png")))  # declaración de la ventana
+        imagenl = filedialog.askopenfilename(title="Seleccionar Imagen",filetypes=(("jpg files", ".jpg"), ("files png", ".png"), ("jpeg files", ".jpeg")))  # declaración de la ventana
         imagen = cv2.imread(imagenl)
         #cv2.imshow("Imagen a solucionar", imagen)
+
+    def conversiongris(self):
+        global imagenl, imagris
+        matim = cv2.imread(imagenl)
+        matrizim = np.array(matim)
+        matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
+        for n in (range(matrizim.shape[0])):
+            for m in (range(matrizim.shape[1])):
+                R = 0
+                G = 0
+                B = 0
+                ope = 0
+                for i in (range(matrizim.shape[2])):
+                    if i == 0:
+                        R = matrizim[n, m, i] * 0.3
+                        ope = ope + R
+                    elif i == 1:
+                        G = matrizim[n, m, i] * 0.59
+                        ope = ope + G
+                else:
+                    B = matrizim[n, m, i] * 0.11
+                    ope = ope + B
+                    matrizeros[n, m] = ope
+
+        aux=np.array(matrizeros, dtype="uint8")
+        cv2.imshow("Grises",aux)
+        cv2.imwrite("Grises Segmenación.jpg", aux)
+        imagris = cv2.imread("Grises Segmentación.jpg")
+        cv2.waitKey(0)
 
     def mediaaritmetica(self):#algoritmo que realiza la convolucion y calculo de la media aritmetica
         global imagenl
@@ -53,8 +84,30 @@ class Menuprincipal:
         cv2.imwrite("Media.jpg", aux)
         cv2.waitKey(0)
 
+    def mediaponderada(self):
+        global imagenl
+        imagen=cv2.imread(imagenl)#leyendo imagen
+        matre=np.zeros((imagen.shape[0], imagen.shape[1]), dtype=int)
+        width=imagen.shape[0]-1
+        height=imagen.shape[1]-1#getting borders of image
+        for n in range(1,width):
+            for m in range(1,height):
+                for t in range(1,imagen.shape[2]):
+                    pon=(imagen.item(n-1,m-1,t)+imagen.item(n,m-1,t)+imagen.item(n+1,m-1,t)+imagen.item(n,m-1,t)+imagen.item(n,m,t)+imagen.item(n+1,m,t)+imagen.item(n-1,m+1,t)+imagen.item(n,m+1,t)+imagen.item(n+1,m+1,t))//(imagen.item(n,m,t)+8)
+                    if pon>255:
+                        pon=255
+                    elif pon<0:
+                        pon=0
+                    matre.itemset((n, m), pon)
+                    # return mataux
+        aux = np.array(matre, dtype="uint8")
+        cv2.imshow("Media Ponderada", aux)
+        cv2.imwrite("MediaPonderada.jpg", aux)
+        cv2.waitKey(0)
+
     def convolucion3(self):#este algoritmo es de prueba
-        img = cv2.imread("Imagen7.jpg")
+        global imagenl
+        img = cv2.imread(imagenl)
         blur = cv2.blur(img, (3, 3))
         cv2.imshow("Media",blur)
                     #mataux=matrizcon[n+1,m+1]#this line is to get position[1,1]
