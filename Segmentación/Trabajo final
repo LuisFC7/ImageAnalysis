@@ -1,0 +1,601 @@
+#Instituto Politécnico Nacional
+#Escuela Superior de Cómputo
+#Alumnos: Chavéz Sandoval Dejanny Itzel
+#Flores Castro Luis Antonio.
+#Image Analysis 3CV12
+#Ajuste de Brillo
+import tkinter
+import cv2  # Library to manipulate images
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image, ImageTk   # library to manipulate an image
+from tkinter import filedialog
+from tkinter import *
+#import thinker as tk
+from subprocess import call
+import random
+'''
+class Ventana():
+    def __init__(self, master):
+        self.vgamma=DoubleVar(value=0.1)#varible para cambiar valor de gamma
+        self.maxex=IntVar(value=0)
+        self.minex=IntVar(value=0)
+        self.maxcon=IntVar(value=0)
+        self.mincon=IntVar(value=0)
+        self.desplazamiento=IntVar(value=0)
+        self.master = master
+        master.title("Imagen Analysis")
+        self.etiqueta = Label(master, text="Problema de brillo")
+        self.etiqueta.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.etiqueta.config(bg="pink1", font=("Arial, 20"))
+        self.abririmagen = Button(master, text="Imagen a solucionar", command=self.imagen, height=1, width=20)
+        self.abririmagen.pack()
+        self.abririmagen.config(bg="mediumpurple1")
+        self.his = Button(master, text="Histograma de la imagen", command=self.gethistogram, height=1, width=20)
+        self.his.pack()
+        self.his.config(bg="light sky blue")
+        self.etiq2 = Label(master, text="Imagen en Grises")
+        self.etiq2.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.etiq2.config(bg="pale green", font=("Arial, 14"))
+        self.gray = Button(master, text="Conversion a Grises", command=self.grayconvert, height=1, width=27)
+        self.gray.pack()
+        self.gray.config(bg="khaki")
+        self.hgray = Button(master, text="Histograma de la Imagen en Grises", command=self.gethistogramgray, height=1, width=27)
+        self.hgray.pack()
+        self.hgray.config(bg="sandy brown")
+        self.etiq1 = Label(master, text="Opción gamma")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.etiq1.config(bg="light coral", font=("Arial, 14"))
+        self.textentrygamma = Label(master, text="Valor gamma: ")#label valor de gamma
+        self.textentrygamma.place(x=40, y=310)
+        self.textentrygamma.config(bg="CadetBlue1")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.valorgamma=Entry(master, textvariable=self.vgamma, width=10)#entry gamma
+        self.valorgamma.place(x=130, y=310)#entry gamma
+        self.gamma = Button(master, text="Función gamma", command=self.gammacorrection, height=1, width=20)
+        self.gamma.pack()
+        self.gamma.config(bg="sandy brown")
+        self.hgamma = Button(master, text="Histograma de la funcion", command=self.gethistogramgamma, height=1, width=20)
+        self.hgamma.pack()
+        self.hgamma.config(bg="khaki")
+        self.etiq1 = Label(master, text="Opción Desplazamiento")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.etiq1.config(bg="pale green", font=("Arial, 14"))
+        self.textdes = Label(master, text="Valor de desplazamiento")
+        self.textdes.place(x=30, y=410)
+        self.textdes.config(bg="CadetBlue1")
+        self.dise = Entry(master, textvariable=self.desplazamiento, width=10)
+        self.dise.place(x=65, y=435)
+        self.dis = Button(master, text="Desplazamiento de la imagen", command=self.displacement, height=1, width=35)
+        self.dis.pack()
+        self.dis.config(bg="light sky blue")
+        self.hdis = Button(master, text="Histograma del desplazamiento de la imagen", command=self.gethistogramdes, height=1, width=35)
+        self.hdis.pack()
+        self.hdis.config(bg="mediumpurple1")
+        self.etiq1 = Label(master, text="Opción Expansión")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.etiq1.config(bg="pink1", font=("Arial, 14"))
+        self.textmax = Label(master, text="Valor Max")
+        self.textmax.place(x=40, y=510)#label de expansion
+        self.textmax.config(bg="brown1")
+        self.valormaex=Entry(master, textvariable=self.maxex, width=10)
+        self.valormaex.place(x=107, y=510)
+        self.textmin=Label(master, text="Valor min")
+        self.textmin.place(x=40, y=533)
+        self.textmin.config(bg="CadetBlue1")
+        self.valorminex=Entry(master, textvariable=self.minex, width=10)
+        self.valorminex.place(x=107, y=533)
+        self.ex = Button(master, text="Expansión de la imagen", command=self.expansion, height=1, width=32)
+        self.ex.pack()
+        self.ex.config(bg="mediumpurple1")
+        self.hex = Button(master, text="Histograma de la Expansión de la Imagen", command=self.gethistogramex, height=1, width=32)
+        self.hex.pack()
+        self.hex.config(bg="light sky blue")
+        self.etiq1 = Label(master, text="Opción Contracción")
+        self.etiq1.pack(side=TOP, fill=BOTH, expand=True, padx=10, pady=5)
+        self.etiq1.config(bg="pale green", font=("Arial, 14"))
+        self.textmaco=Label(master, text="Valor Max")
+        self.textmaco.place(x=40, y=625)
+        self.textmaco.config(bg="brown1")
+        self.valormaco = Entry(master, textvariable=self.maxcon, width=10)
+        self.valormaco.place(x=107, y=625)
+        self.textminco=Label(master, text="Valor min")
+        self.textminco.place(x=40, y=650)
+        self.textminco.config(bg="CadetBlue1")
+        self.valorminco = Entry(master, textvariable=self.mincon, width=10)
+        self.valorminco.place(x=107, y=650)
+        self.con = Button(master, text="Contracción de la Imagen", command=self.contraccion, height=1, width=32)
+        self.con.pack()
+        self.con.config(bg="khaki")
+        self.hcon = Button(master, text="Histograma de la Contracción de la Imagen", command=self.gethistogramcon, height=1, width=32)
+        self.hcon.pack()
+        self.hcon.config(bg="sandy brown")
+        self.botonCerrar = Button(master, text="Cerrar", command=master.quit)
+        self.botonCerrar.pack()
+        self.botonCerrar.config(bg="light coral")
+
+    # funcion para seleccionar imagen desde interfaz
+    def imagen(self):
+        global ima
+        ima = filedialog.askopenfilename(title="Seleccionar Imagen",filetypes=(("jpg files", ".jpg"), ("files png", ".png"), ("jpeg files", ".jpeg")))  # declaración de la ventana
+        imagen = cv2.imread(ima)
+        cv2.imshow("Imagen a solucionar", imagen)
+
+    def grayconvert(self):
+        global ima, imagris
+        matim = cv2.imread(ima)
+        matrizim = np.array(matim)
+        matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
+        for n in (range(matrizim.shape[0])):
+            for m in (range(matrizim.shape[1])):
+                R = 0
+                G = 0
+                B = 0
+                ope = 0
+                for i in (range(matrizim.shape[2])):
+                    if i == 0:
+                        R = matrizim[n, m, i] * 0.3
+                        ope = ope + R
+                    elif i == 1:
+                        G = matrizim[n, m, i] * 0.59
+                        ope = ope + G
+                else:
+                    B = matrizim[n, m, i] * 0.11
+                    ope = ope + B
+                    matrizeros[n, m] = ope
+
+        aux=np.array(matrizeros, dtype="uint8")
+        cv2.imshow("Grises",aux)
+        cv2.imwrite("Copia-Grises.jpg", aux)
+        imagris = cv2.imread("Copia-Grises.jpg")
+        cv2.waitKey(0)
+
+    def gammacorrection(self):
+        global ima, gaima
+        imagen = cv2.imread(ima)  # lectura de imagen
+        gamma = float(self.vgamma.get())  # gamma con valor < 1 aclara imagen y con valor >1 oscurece la imagen
+        variable = 255  # variable representa el valor de lambda
+        aux = (imagen / variable)  # division entre valor del pixel(imagen) y varible(lambda)
+        gamma2 = np.array(variable * np.power(aux, gamma), dtype='uint8')  # función de correcion gamma implementada
+        cv2.imshow('gamma', gamma2)  # se muestra
+        cv2.imwrite("Correcion-gamma.jpg", gamma2)  # se imprime
+        gaima = cv2.imread("Correcion-gamma.jpg")
+        #gaima = Image.open("Correcion-gamma.jpg")
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    def displacement(self):
+        global imagris, imdes
+        imagen = imagris
+        # imagen.astype(dtype=np.int32)  # convertir a 32 bits
+        matim = np.array(imagen)
+        # height = imagen.shape[0]
+        # width = imagen.shape[1]
+        desplazamiento = int(self.desplazamiento.get())
+        try:
+            for i in range(matim.shape[0]):
+                for j in range(matim.shape[1]):
+                    matim[i][j][0] += desplazamiento  # acceden a la posicion de los valores del pixel y los recorre
+                    matim[i][j][1] += desplazamiento
+                    matim[i][j][2] += desplazamiento
+            matim[
+                matim > 255] = 255  # condicion que si el nuevo desplazamiento supera el valor 255 lo deje como 255 max
+            matim[matim < 0] = 0  # si es menor a 0 lo iguala a 0
+        except:
+            for i in range(matim.shape[0]):  # sentencia de error
+                for j in range(matim.shape[1]):
+                    matim[i][j] += desplazamiento
+            matim[matim > 255] = 255
+            matim[matim < 0] = 0
+
+        des = np.array(matim, dtype="uint8")
+        cv2.imshow("Desplazamiento", des)
+        cv2.imwrite("Desplazamiento.jpg", des)
+        imdes = cv2.imread("Desplazamiento.jpg")
+
+    def expansion(self):
+        global imagris,imex
+        imagen = imagris
+        matrim = np.array(imagen)
+        ma = int(self.maxex.get())
+        me = int(self.minex.get())
+        try:
+            vmax = np.max(matrim)
+            vmin = np.min(matrim)
+            for i in range(matrim.shape[0]):
+                for j in range(matrim.shape[1]):
+                    matrim[i][j][0] = int(round(((matrim[i][j][0] - vmin) / (vmax - vmin)) * (ma - me) + me))
+                    matrim[i][j][1] = int(round(((matrim[i][j][1] - vmin) / (vmax - vmin)) * (ma - me) + me))
+                    matrim[i][j][2] = int(round(((matrim[i][j][2] - vmin) / (vmax - vmin)) * (ma - me) + me))
+            matrim[matrim > 255] = 255
+            matrim[matrim < 0] = 0
+        except:
+            vmax = np.max(matrim)
+            vmin = np.min(matrim)
+            for i in range(matrim.shape[0]):
+                for j in range(matrim.shape[1]):
+                    matrim[i][j] = int(round(((matrim[i][j] - vmin) / (vmax - vmin)) * (ma - me) + me))
+                matrim[matrim > 255] = 255
+                matrim[matrim < 0] = 0
+
+        des = np.array(matrim, dtype="uint8")
+        cv2.imshow("Expansión", des)
+        cv2.imwrite("Expansion.jpg", des)
+        imex = cv2.imread("Expansion.jpg")
+
+    def contraccion(self):
+        global imagris, imco
+        imagen = imagris
+        maim = np.array(imagen)
+        height = maim.shape[0]
+        width = maim.shape[1]
+        max = int(self.maxcon.get())
+        min = int(self.mincon.get())
+        try:
+            fmax = np.max(maim)
+            fmin = np.min(maim)
+            for i in range(height):
+                for j in range(width):
+                    maim[i][j][0] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][0] - fmin) + min))
+                    maim[i][j][1] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][1] - fmin) + min))
+                    maim[i][j][2] = int(round(((max - min) / (fmax - fmin)) * (maim[i][j][2] - fmin) + min))
+            maim[maim > 255] = 255
+            maim[maim < 0] = 0
+        except:
+            fmax = np.max(maim)
+            fmin = np.min(maim)
+            for i in range(height):
+                for j in range(width):
+                    maim[i][j] = int(round(((maim[i][j]) / (fmax - fmin)) * (maim[i][j] - fmin) + min))
+            maim[maim > 255] = 255
+            maim[maim < 0] = 0
+        imagencon = np.array(maim, dtype="uint8")
+        cv2.imshow("Contraccion", imagencon)
+        cv2.imwrite("Contraccion.jpg", imagencon)
+        imco = cv2.imread("Contraccion.jpg")
+
+    def gethistogram(self):
+        global ima
+        img = cv2.imread(ima)
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramgray(self):
+        global imagris
+        img = imagris
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramgamma(self):
+        global gaima
+        img = gaima
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramdes(self):
+        global imdes
+        img = imdes
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramex(self):
+        global imex
+        img = imex
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramcon(self):
+        global imco
+        img = imco
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+'''
+#SEGMENTACION
+class Ventana1():
+    def __init__(self, master):
+        self.filtervalue = IntVar(value=0)
+        self.vruidobipolar = DoubleVar(value=0.01)
+        self.eti = Label(master, text="Segmentacion")
+        self.eti.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
+        self.eti.config(bg="light sky blue", font=("Arial, 20"))
+        self.open = Button(master, text="Imagen", command=self.openimagen, height=1, width=20)
+        self.open.pack()
+        self.open.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.hi = Button(master, text="Histograma de la Imagen", command=self.gethistogramm, height=1, width=32)
+        self.hi.pack()
+        self.hi.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.ruido = Button(master, text="Ruido bipolar", command=self.ruidobipolar, height=1, width=20)
+        self.ruido.pack()
+        self.ruido.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.vruido = Entry(master, textvariable=self.vruidobipolar, width=10)  # entry gamma
+        self.vruido.place(x=20, y=340)  # entry gamma
+        self.textruido = Label(master, text="Valor ruido")
+        self.textruido.place(x=20, y=315)
+        self.textruido.config(bg="CadetBlue1")
+        self.hbip = Button(master, text="Histograma de la Imagen con Ruido Bipolar", command=self.gethistogrambipolar, height=1, width=32)
+        self.hbip.pack()
+        self.hbip.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.btnGris = Button(master, text="Conversión a gris", command=self.conversiongris, height=1, width=27)
+        self.btnGris.pack()
+        self.btnGris.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.hg = Button(master, text="Histograma en escala de grises", command=self.gethistogramgris, height=1, width=32)
+        self.hg.pack()
+        self.hg.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.btnMarit = Button(master, text="Media Aritmetica", command=self.mediaaritmetica, height=1, width=27)
+        self.btnMarit.pack()
+        self.btnMarit.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.har = Button(master, text="Histograma de la Media Aritmetica", command=self.gethistogramarit, height=1, width=32)
+        self.har.pack()
+        self.har.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.btnMpon = Button(master, text="Media Ponderada", command=self.mediaponderada, height=1, width=27)
+        self.btnMpon.pack()
+        self.btnMpon.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.vponderada = Entry(master, textvariable=self.filtervalue, width=10)  # entry gamma
+        self.vponderada.place(x=20, y=400)  # entry gamma
+        self.textponderada = Label(master, text="Valor N")
+        self.textponderada.place(x=20, y=370)
+        self.textponderada.config(bg="CadetBlue1")
+        self.hpon = Button(master, text="Histograma de la Media Ponderada", command=self.gethistogrampond, height=1, width=32)
+        self.hpon.pack()
+        self.hpon.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.btnLaplaciano = Button(master, text="Laplaciano", command=self.laplaciano, height=1, width=27)
+        self.btnLaplaciano.pack()
+        self.btnLaplaciano.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.hlap = Button(master, text="Histograma de Laplaciano", command=self.gethistogramlap, height=1, width=32)
+        self.hlap.pack()
+        self.hlap.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.botonCerrar = Button(master, text="Cerrar", command=master.quit)
+        self.botonCerrar.pack()
+        self.botonCerrar.config(bg="pink1", font=("Arial, 12"))
+
+    def openimagen(self):
+        global imagenl
+        imagenl = filedialog.askopenfilename(title="Seleccionar Imagen",filetypes=(("jpg files", ".jpg"), ("files png", ".png"), ("jpeg files", ".jpeg")))  # declaración de la ventana
+        imagen = cv2.imread(imagenl)
+        cv2.imshow("Imagen a solucionar", imagen)
+
+    def ruidobipolar(self):
+        global imagenl, imab
+        imagen = cv2.imread(imagenl)
+        width = imagen.shape[0]
+        height = imagen.shape[1]
+        porcentaje = self.vruidobipolar.get()  # 0.010
+        output = np.copy(imagen)
+        prob = 1 - porcentaje
+
+        for i in range(width):
+            for j in range(height):
+                coordenada = random.random()
+                if coordenada < porcentaje:
+                    output[i][j] = 0
+                elif coordenada > prob:
+                    output[i][j] = 255
+                else:
+                    output[i][j] = imagen[i][j]
+        cv2.imshow("imagen", output)
+        cv2.imwrite("Ruidobipolar.jpg", output)
+        imab = cv2.imread("Ruidobipolar.jpg")
+
+    def conversiongris(self):
+        global imagenl, imagris
+        matim = cv2.imread(imagenl)
+        matrizim = np.array(matim)
+        matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
+        for n in (range(matrizim.shape[0])):
+            for m in (range(matrizim.shape[1])):
+                R = 0
+                G = 0
+                B = 0
+                ope = 0
+                for i in (range(matrizim.shape[2])):
+                    if i == 0:
+                        R = matrizim[n, m, i] * 0.3
+                        ope = ope + R
+                    elif i == 1:
+                        G = matrizim[n, m, i] * 0.59
+                        ope = ope + G
+                else:
+                    B = matrizim[n, m, i] * 0.11
+                    ope = ope + B
+                    matrizeros[n, m] = ope
+
+        aux = np.array(matrizeros, dtype="uint8")
+        cv2.imshow("Grises", aux)
+        cv2.imwrite("Grises Media.jpg", aux)
+        imagris = cv2.imread("Grises Media.jpg")
+        cv2.waitKey(0)
+
+    def mediaaritmetica(self):  # algoritmo que realiza la convolucion y calculo de la media aritmetica
+        global imagenl, imarit
+        imagen = cv2.imread(imagenl)
+        # matrizcon=np.array(imagen)
+        mataux = np.zeros((imagen.shape[0], imagen.shape[1]), dtype=int)
+        w = imagen.shape[0] - 1
+        h = imagen.shape[1] - 1
+        for n in range(1, w):
+            for m in range(1, h):
+                for t in range(1, imagen.shape[2]):
+                    media=(imagen.item(n-1,m-1,t)+imagen.item(n,m-1,t)+imagen.item(n+1,m-1,t)+imagen.item(n,m-1,t)+imagen.item(n,m,t)+imagen.item(n+1,m,t)+imagen.item(n-1,m+1,t)+imagen.item(n,m+1,t)+imagen.item(n+1,m+1,t))//9
+                    if media > 255:
+                        media = 255
+                    elif media < 0:
+                        media = 0
+                    mataux.itemset((n, m), media)
+        # return mataux
+        aux = np.array(mataux, dtype="uint8")
+        cv2.imshow("Media Aritmetica", aux)
+        cv2.imwrite("Media.jpg", aux)
+        imarit = cv2.imread("Media.jpg")
+        cv2.waitKey(0)
+
+    def mediaponderada(self):  # algoritmo que realiza la convolucion y calculo de la media aritmetica
+        global imagenl, imapon
+        imagen = cv2.imread(imagenl)
+        kernel = int(self.filtervalue.get())
+        # matrizcon=np.array(imagen)
+        mataux = np.zeros((imagen.shape[0], imagen.shape[1]), dtype=int)
+        w = imagen.shape[0] - 1
+        h = imagen.shape[1] - 1
+        for n in range(1, w):
+            for m in range(1, h):
+                for t in range(1, imagen.shape[2]):
+                    media = (imagen.item(n-1,m-1,t)+imagen.item(n,m-1,t)+imagen.item(n+1,m-1,t)+imagen.item(n,m-1,t)+(imagen.item(n,m,t)*kernel)+imagen.item(n+1,m,t) + imagen.item(n-1,m+1,t)+imagen.item(n,m+1,t)+imagen.item(n+1,m+1,t))//9
+                    if media > 255:
+                        media = 255
+                    elif media < 0:
+                        media = 0
+                    mataux.itemset((n, m), media)
+        # return mataux
+        aux = np.array(mataux, dtype="uint8")
+        cv2.imshow("Media Ponderada", aux)
+        cv2.imwrite("MediaPonderada.jpg", aux)
+        imapon = cv2.imread("MediaPonderada.jpg")
+        cv2.waitKey(0)
+
+    def laplaciano(self):  # algoritmo que realiza la convolucion y calculo de la media aritmetica
+        global imagenl, imalap
+        imagen = cv2.imread(imagenl)
+        # matrizcon=np.array(imagen)
+
+        mataux = np.zeros((imagen.shape[0], imagen.shape[1]), dtype=int)
+        w = imagen.shape[0] - 1
+        h = imagen.shape[1] - 1
+        for n in range(1, w):
+            for m in range(1, h):
+                for t in range(1, imagen.shape[2]):
+                    media = ((imagen.item(n - 1, m - 1, t) * 0) + (imagen.item(n, m - 1, t) * -1) + (
+                                imagen.item(n + 1, m - 1, t) * 0) + (imagen.item(n, m - 1, t) * -1) + (
+                                         imagen.item(n, m, t) * 4) + (imagen.item(n + 1, m, t) * -1) + (
+                                         imagen.item(n - 1, m + 1, t) * 0) + (imagen.item(n, m + 1, t) * -1) + (
+                                         imagen.item(n + 1, m + 1, t) * 0))
+                    if media >= 255:
+                        media = 255
+                    elif media <= 0:
+                        media = 0
+                    mataux.itemset((n, m), media)
+        # return mataux
+        print(mataux)
+        aux = np.array(mataux, dtype="uint8")
+        cv2.imshow("Filtro Laplaciano", aux)
+        cv2.imwrite("Laplaciano.jpg", aux)
+        imalap = cv2.imread(("Laplaciano.jpg"))
+        cv2.waitKey(0)
+
+    def convolucion3(self):  # este algoritmo es de prueba
+        global imagenl
+        img = cv2.imread(imagenl)
+        blur = cv2.blur(img, (3, 3))
+        cv2.imshow("Media", blur)
+        # mataux=matrizcon[n+1,m+1]#this line is to get position[1,1]
+        # matrizcon[n,m]=(matrizcon[n-1,m-1]+matrizcon[n,m-1]+matrizcon[n+1,m-1]+matrizcon[n-1,m]+matrizcon[n,m]+matrizcon[n+1,m]+matrizcon[n-1,m+1]+matrizcon[n,m+1]+matrizcon[n+1,m+1])//9
+
+    def gethistogramm(self):
+        global imagenl
+        img = cv2.imread(imagenl)
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramgris(self):
+        global imagris
+        img = imagris
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogrambipolar(self):
+        global imab
+        img = imab
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramarit(self):
+        global imarit
+        img = imarit
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogrampond(self):
+        global imapon
+        img = imapon
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def gethistogramlap(self):
+        global imalap
+        img = imalap
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+        cv2.destroyAllWindows()
+
+
+'''
+window0 = Tk() #ajuste de brillo
+Ventana = Ventana(window0)
+window0.config(bg="black")
+window0.geometry('600x700')
+window0.resizable(width=0, height=0)
+window0.title("AJUSTE DE BRILLO")
+window0.iconbitmap("Icon.ico")
+'''
+window1 = Tk() #segmentacion
+Ventana1 = Ventana1(window1)
+window1.config(bg="black")
+window1.geometry('500x500')
+window1.resizable(width=0, height=0)
+window1.title("SEGMENTACION")
+window1.iconbitmap("Icon.ico")
+#window0.mainloop()
+window1.mainloop()
