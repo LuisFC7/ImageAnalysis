@@ -335,7 +335,7 @@ class Ventana1():
         self.ruido.config(bg="mediumpurple1", font=("Arial, 12"))
         self.vruido = Entry(master, textvariable=self.vruidobipolar, width=10)  # entry gamma
         self.vruido.place(x=20, y=340)  # entry gamma
-        self.textruido = Label(master, text="Valor ruido")
+        self.textruido = Label(master, text="Valor Ruido Bipolar")
         self.textruido.place(x=20, y=315)
         self.textruido.config(bg="CadetBlue1")
         self.hbip = Button(master, text="Histograma de la Imagen con Ruido Bipolar", command=self.gethistogrambipolar, height=1, width=32)
@@ -358,7 +358,12 @@ class Ventana1():
         self.btnMpon.config(bg="mediumpurple1", font=("Arial, 12"))
         self.vponderada = Entry(master, textvariable=self.filtervalue, width=10)  # entry gamma
         self.vponderada.place(x=20, y=400)  # entry gamma
-        self.textponderada = Label(master, text="Valor N")
+        self.textnote=Label(master,text="NOTA\n Para agregar el valor de ruido\n bipolar se debe agregar de \n "
+                                        "la siguiente manera:\n Por ejemplo; para 10% = 0.01\n "
+                                        "20% = 0.02", height=7,width=25)
+        self.textnote.place(x=25, y=120)
+        self.textnote.config(bg="CadetBlue1")
+        self.textponderada = Label(master, text="Valor N media ponderada")
         self.textponderada.place(x=20, y=370)
         self.textponderada.config(bg="CadetBlue1")
         self.hpon = Button(master, text="Histograma de la Media Ponderada", command=self.gethistogrampond, height=1, width=32)
@@ -403,9 +408,8 @@ class Ventana1():
         imab = cv2.imread("Ruidobipolar.jpg")
 
     def conversiongris(self):
-        global imab, imagris
-        matim = imab
-        #matim = cv2.imread(imagenl)
+        global imagenl, imagris
+        matim = cv2.imread(imagenl)
         matrizim = np.array(matim)
         matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
         for n in (range(matrizim.shape[0])):
@@ -433,9 +437,8 @@ class Ventana1():
         cv2.waitKey(0)
 
     def mediaaritmetica(self):  # algoritmo que realiza la convolucion y calculo de la media aritmetica
-        global imab, imarit
-        imagen = imab
-        #imagen = cv2.imread(imagenl)
+        global imagenl, imarit
+        imagen = cv2.imread(imagenl)
         # matrizcon=np.array(imagen)
         mataux = np.zeros((imagen.shape[0], imagen.shape[1]), dtype=int)
         w = imagen.shape[0] - 1
@@ -454,12 +457,11 @@ class Ventana1():
         cv2.imshow("Media Aritmetica", aux)
         cv2.imwrite("Media.jpg", aux)
         imarit = cv2.imread("Media.jpg")
-        #cv2.waitKey(0)
+        cv2.waitKey(0)
 
     def mediaponderada(self):  # algoritmo que realiza la convolucion y calculo de la media aritmetica
-        global imab, imapon
-        imagen = imab
-        #imagen = cv2.imread(imagenl)
+        global imagenl, imapon
+        imagen = cv2.imread(imagenl)
         kernel = int(self.filtervalue.get())
         # matrizcon=np.array(imagen)
         mataux = np.zeros((imagen.shape[0], imagen.shape[1]), dtype=int)
@@ -479,7 +481,7 @@ class Ventana1():
         cv2.imshow("Media Ponderada", aux)
         cv2.imwrite("MediaPonderada.jpg", aux)
         imapon = cv2.imread("MediaPonderada.jpg")
-        #cv2.waitKey(0)
+        cv2.waitKey(0)
 
     def laplaciano(self):  # algoritmo que realiza la convolucion y calculo de la media aritmetica
         global imagenl, imalap
@@ -492,23 +494,23 @@ class Ventana1():
         for n in range(1, w):
             for m in range(1, h):
                 for t in range(1, imagen.shape[2]):
-                    media = ((imagen.item(n - 1, m - 1, t) * 0) + (imagen.item(n, m - 1, t) * -1) + (
+                    laplaciano = ((imagen.item(n - 1, m - 1, t) * 0) + (imagen.item(n, m - 1, t) * -1) + (
                                 imagen.item(n + 1, m - 1, t) * 0) + (imagen.item(n, m - 1, t) * -1) + (
                                          imagen.item(n, m, t) * 4) + (imagen.item(n + 1, m, t) * -1) + (
                                          imagen.item(n - 1, m + 1, t) * 0) + (imagen.item(n, m + 1, t) * -1) + (
                                          imagen.item(n + 1, m + 1, t) * 0))
-                    if media >= 255:
-                        media = 255
-                    elif media <= 0:
-                        media = 0
-                    mataux.itemset((n, m), media)
+                    if laplaciano >= 255:
+                        laplaciano = 255
+                    elif laplaciano <= 0:
+                        laplaciano = 0
+                    mataux.itemset((n, m),laplaciano)
         # return mataux
         print(mataux)
         aux = np.array(mataux, dtype="uint8")
         cv2.imshow("Filtro Laplaciano", aux)
         cv2.imwrite("Laplaciano.jpg", aux)
         imalap = cv2.imread(("Laplaciano.jpg"))
-        #cv2.waitKey(0)
+        cv2.waitKey(0)
 
     def convolucion3(self):  # este algoritmo es de prueba
         global imagenl
@@ -596,9 +598,9 @@ window0.iconbitmap("Icon.ico")
 window1 = Tk() #segmentacion
 Ventana1 = Ventana1(window1)
 window1.config(bg="black")
-window1.geometry('500x500')
+window1.geometry('800x500')
 window1.resizable(width=0, height=0)
 window1.title("SEGMENTACION")
-#window1.iconbitmap("Icon.ico")
+window1.iconbitmap("Icon.ico")
 #window0.mainloop()
 window1.mainloop()
