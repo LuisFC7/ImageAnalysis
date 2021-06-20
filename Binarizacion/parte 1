@@ -587,8 +587,7 @@ class Ventana1():
 #Segmentacion completa y MM binaria
 class Ventana2():
     def __init__(self, master):
-        self.filtervalue = IntVar(value=0)
-        self.vruidobipolar = DoubleVar(value=0.01)
+        self.valorumbral = IntVar(value=0)
         self.eti = Label(master, text="Binarización")
         self.eti.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
         self.eti.config(bg="light sky blue", font=("Arial, 20"))
@@ -604,6 +603,8 @@ class Ventana2():
         self.ruido = Button(master, text="Multiumbralizacion", command=self.multiplebinarization, height=1, width=20)
         self.ruido.pack()
         self.ruido.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.vumbral = Entry(master, textvariable=self.valorumbral,width=10)  # obtiene el valor de umbral mediante entry
+        self.vumbral.place(x=20, y=400)
         self.botonCerrar = Button(master, text="Cerrar", command=master.quit)
         self.botonCerrar.pack()
         self.botonCerrar.config(bg="pink1", font=("Arial, 12"))
@@ -653,15 +654,16 @@ class Ventana2():
 
         aux = np.array(matrizeros, dtype="uint8")
         cv2.imshow("Grises", aux)
-        cv2.imwrite("Grises Media.jpg", aux)
-        imagris = cv2.imread("Grises Media.jpg")
+        cv2.imwrite("Grises.jpg", aux)
+        imagris = cv2.imread("Grises.jpg")
         #cv2.waitKey(0)
 
     def multiplebinarization(self):
         global imagris
         img = imagris
         # umbral 1
-        ret, binary = cv2.threshold(img, 100, 255, cv2.THRESH_BINARY)
+        umbral = int(self.valorumbral.get())  # variable que obtiene valor de umbral por consola
+        ret, binary = cv2.threshold(img, umbral, 255, cv2.THRESH_BINARY)
         cv2.imshow('binary', binary)
         # Umbral global
         ret1, binary1 = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
