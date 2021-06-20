@@ -667,17 +667,19 @@ class Ventana2():
         imagris = cv2.imread("Grises.jpg")
         #cv2.waitKey(0)
 
-    def multiplebinarization(self):
+     def multiplebinarization(self):
         global imagris
         img = imagris
         # umbral 1
         umbral = int(self.valorumbral.get())  # variable que obtiene valor de umbral por consola
         umbral2 = int(self.valorumbral2.get())
         ret, binary = cv2.threshold(img, umbral, 255, cv2.THRESH_BINARY)
-        cv2.imshow('Umbral-1', binary)
+        cv2.imshow('Umbral 1', binary)
+        cv2.imwrite("umbral 1.jpg", binary)
         # Umbral global
         ret1, binary1 = cv2.threshold(img,umbral2, 255, cv2.THRESH_BINARY)
-        cv2.imshow('Umbral-2', binary1)
+        cv2.imshow('Umbral 2', binary1)
+        cv2.imwrite("Umbral 2.jpg", binary1)
 
 window2 = Tk() #segmentacion
 Ventana2 = Ventana2(window2)
