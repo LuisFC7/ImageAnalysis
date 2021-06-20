@@ -676,11 +676,15 @@ class Ventana2():
         ret, binary = cv2.threshold(img, umbral, 255, cv2.THRESH_BINARY)
         cv2.imshow('Umbral 1', binary)
         cv2.imwrite("umbral 1.jpg", binary)
+        imabi = cv2.imread("umbral 1.jpg")
         # Umbral global
-        ret1, binary1 = cv2.threshold(img,umbral2, 255, cv2.THRESH_BINARY)
+        ret1, binary1 = cv2.threshold(img, umbral2, 255, cv2.THRESH_BINARY)
         cv2.imshow('Umbral 2', binary1)
         cv2.imwrite("Umbral 2.jpg", binary1)
-
+        imabi1 = cv2.imread("Umbral 2.jpg")
+        img_bwa = cv2.bitwise_xor(imabi, imabi1)
+        cv2.imshow('Union', img_bwa)
+        
 window2 = Tk() #segmentacion
 Ventana2 = Ventana2(window2)
 window2.config(bg="black")
