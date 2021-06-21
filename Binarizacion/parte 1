@@ -614,6 +614,9 @@ class Ventana2():
         self.textum1.config(bg="CadetBlue1")
         self.vumbral = Entry(master, textvariable=self.valorumbral2,width=10)  # obtiene el valor de umbral mediante entry
         self.vumbral.place(x=20, y=450)
+        self.hi = Button(master, text="Histograma de la Imagen binarizada", command=self.gethistogrammbina, height=1, width=32)
+        self.hi.pack()
+        self.hi.config(bg="mediumpurple1", font=("Arial, 12"))
         self.botonCerrar = Button(master, text="Cerrar", command=master.quit)
         self.botonCerrar.pack()
         self.botonCerrar.config(bg="pink1", font=("Arial, 12"))
@@ -684,6 +687,17 @@ class Ventana2():
         imabi1 = cv2.imread("Umbral 2.jpg")
         img_bwa = cv2.bitwise_xor(imabi, imabi1)
         cv2.imshow('Union', img_bwa)
+
+    def gethistogrammbina(self):
+        global img_bwa
+        img = img_bwa
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+     
         
 window2 = Tk() #segmentacion
 Ventana2 = Ventana2(window2)
