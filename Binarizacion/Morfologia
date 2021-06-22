@@ -1,0 +1,58 @@
+    def morfologia(self):
+        global imagris
+        grises = imagris
+        #grises = cv2.cvtColor(imagris, cv2.COLOR_BGR2GRAY)
+        #mandamos llamar la imagen original ya convertida a grises
+        #now we have to binarize with value umbral
+        valormo = int(self.valormorfo.get())
+        ret, binaria = cv2.threshold(grises, valormo, 255, cv2.THRESH_BINARY)
+        cv2.imshow('Binarizacion', binaria)
+        cv2.imwrite("Binarizacion.jpg", binaria)
+        imghom = cv2.imread("Binarizacion.jpg")
+
+        #image binarized
+        #now we have to add the ee
+        imagenhom = imghom
+        elemento1 = np.array(([0 , 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                              [0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+                              [0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+                              [0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), dtype="int")
+
+        elemento2 = np.array((
+            [0, 1, 0],
+            [1, 0, 1],
+            [0, 1, 0]), dtype="int")
+
+        #elemento2 = np.array(([[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1],
+         #            [1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1],[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+          #           [1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1],
+           #          [1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1],
+            #         [1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1],
+             #        [1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1],
+              #       [1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]), dtype="int")
+
+        #in this part we have to put hit or miss transformate
+        output_image2 = cv2.cvtColor(imghom, cv2.COLOR_BGR2GRAY)
+        output_image = cv2.morphologyEx(output_image2, cv2.MORPH_HITMISS, elemento2)
+        cv2.imshow("Hit or Miss", output_image)
+        output_image1 = cv2.morphologyEx(output_image2, cv2.MORPH_HITMISS, elemento1)
+        cv2.imshow("Hit or Miss 1", output_image1)
+        rate = 50
+        kernel = (elemento2 + 1) * 127
+        kernel = np.uint8(kernel)
+        kernel = cv2.resize(kernel, (400, 400))
+        kernel1 = (elemento1 + 1) * 127
+        kernel1 = np.uint8(kernel1)
+        kernel1 = cv2.resize(kernel1, (400, 400))
+        #kernel = cv2.resize(kernel, None, fx=rate, fy=rate, interpolation=cv2.INTER_NEAREST)
+        #cv2.imshow("kernel", kernel)
+        #cv2.imshow("kernel 1", kernel1)
+        #cv2.moveWindow("kernel", 0, 0)
+        #output_image = cv2.resize(output_image, (400, 400))
+        #output_image = cv2.resize(output_image, None, fx=rate, fy=rate, interpolation=cv2.INTER_NEAREST)
+        #cv2.imshow("Hit or Miss", output_image)
+        #cv2.moveWindow("Hit or Miss", 500, 200)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
