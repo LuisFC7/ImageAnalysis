@@ -618,6 +618,9 @@ class Ventana2():
         self.vumbral.place(x=20, y=450)
         self.vmorfo = Entry(master, textvariable=self.valormorfo,width=10)  # obtiene el valor de umbral mediante entry
         self.vmorfo.place(x=20, y=480)
+        self.hi = Button(master, text="Histograma de la Imagen binarizada", command=self.gethistogrammbina, height=1, width=32)
+        self.hi.pack()
+        self.hi.config(bg="mediumpurple1", font=("Arial, 12"))
         self.morfo = Button(master, text="Morfología", command=self.morfologia, height=1, width=20)
         self.morfo.pack()
         self.morfo.config(bg="mediumpurple1", font=("Arial, 12"))
@@ -674,7 +677,7 @@ class Ventana2():
         #cv2.waitKey(0)
 
     def multiplebinarization(self):
-        global imagris
+        global imagris, img_bwa
         img = imagris
         # umbral 1
         umbral = int(self.valorumbral.get())  # variable que obtiene valor de umbral por consola
@@ -690,9 +693,23 @@ class Ventana2():
         imabi1 = cv2.imread("Umbral 2.jpg")
         img_bwa = cv2.bitwise_xor(imabi, imabi1)
         cv2.imshow('Union', img_bwa)
-
-        th2 = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
-        cv2.imshow('Binario', th2)
+        # Otsu
+        # imagenn = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # blur = cv2.GaussianBlur(imagenn, (5, 5), 0)
+        # ret, thresh1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        # cv2.imshow('Otsu', thresh1)
+        
+     def gethistogrammbina(self):
+        global img_bwa
+        img = img_bwa
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+    
+       
     '''
     def morfologiabinaria(self):
         global imagris
