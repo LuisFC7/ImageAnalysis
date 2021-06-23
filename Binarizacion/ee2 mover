@@ -1,0 +1,405 @@
+class Ventana2():
+    def __init__(self, master):
+        self.valorumbral = IntVar(value=0)
+        self.valorumbral2= IntVar(value=0)
+        self.valormorfo= IntVar(value=0)#umbralizar imagen y despues aplicar ee's
+        self.eti = Label(master, text="Binarización")
+        self.eti.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
+        self.eti.config(bg="light sky blue", font=("Arial, 20"))
+        self.open = Button(master, text="Imagen", command=self.openimagen, height=1, width=20)
+        self.open.pack()
+        self.open.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.hi = Button(master, text="Histograma de la Imagen", command=self.gethistogramm, height=1, width=32)
+        self.hi.pack()
+        self.hi.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.btnGris = Button(master, text="Conversión a gris", command=self.conversiongris, height=1, width=27)
+        self.btnGris.pack()
+        self.btnGris.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.ruido = Button(master, text="Multiumbralizacion", command=self.multiplebinarization, height=1, width=20)
+        self.ruido.pack()
+        self.ruido.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.textum1 = Label(master, text="Valor para Umbral 1")
+        self.textum1.place(x=20, y=370)
+        self.textum1.config(bg="CadetBlue1")
+        self.vumbral = Entry(master, textvariable=self.valorumbral,width=10)  # obtiene el valor de umbral mediante entry
+        self.vumbral.place(x=20, y=400)
+        self.textum1 = Label(master, text="Valor para Umbral 2")
+        self.textum1.place(x=20, y=420)
+        self.textum1.config(bg="CadetBlue1")
+        self.vumbral = Entry(master, textvariable=self.valorumbral2,width=10)  # obtiene el valor de umbral mediante entry
+        self.vumbral.place(x=20, y=450)
+        self.textmor = Label(master, text="Valor para Umbral MMB")
+        self.textmor.place(x=20, y=500)
+        self.textmor.config(bg="CadetBlue1")
+        self.vmorfo = Entry(master, textvariable=self.valormorfo,width=10)  # obtiene el valor de umbral mediante entry
+        self.vmorfo.place(x=20, y=540)
+        self.hi = Button(master, text="Histograma de la Imagen binarizada", command=self.gethistogrammbina, height=1, width=32)
+        self.hi.pack()
+        self.hi.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.morfo = Button(master, text="Morfología", command=self.erosion, height=1, width=20)
+        self.morfo.pack()
+        self.morfo.config(bg="mediumpurple1", font=("Arial, 12"))
+        self.botonCerrar = Button(master, text="Cerrar", command=master.quit)
+        self.botonCerrar.pack()
+        self.botonCerrar.config(bg="pink1", font=("Arial, 12"))
+
+
+    def openimagen(self):
+        global imagenl
+        imagenl = filedialog.askopenfilename(title="Seleccionar Imagen", filetypes=(
+        ("jpg files", ".jpg"), ("files png", ".png"), ("jpeg files", ".jpeg")))  # declaración de la ventana
+        imagen = cv2.imread(imagenl)
+        cv2.imshow("Imagen a solucionar", imagen)
+
+    def gethistogramm(self):
+        global imagenl
+        img = cv2.imread(imagenl)
+        color = ('b', 'g', 'r')
+        for i, c in enumerate(color):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=c)
+            plt.xlim([0, 256])
+        plt.show()
+        cv2.destroyAllWindows()
+
+    def conversiongris(self):
+        global imab, imagris
+        #matim = imagenl
+        matim = cv2.imread(imagenl)
+        matrizim = np.array(matim)
+        matrizeros = np.zeros((int(matrizim.shape[0]), int(matrizim.shape[1])))
+        for n in (range(matrizim.shape[0])):
+            for m in (range(matrizim.shape[1])):
+                R = 0
+                G = 0
+                B = 0
+                ope = 0
+                for i in (range(matrizim.shape[2])):
+                    if i == 0:
+                        R = matrizim[n, m, i] * 0.3
+                        ope = ope + R
+                    elif i == 1:
+                        G = matrizim[n, m, i] * 0.59
+                        ope = ope + G
+                else:
+                    B = matrizim[n, m, i] * 0.11
+                    ope = ope + B
+                    matrizeros[n, m] = ope
+
+        aux = np.array(matrizeros, dtype="uint8")
+        cv2.imshow("Grises", aux)
+        cv2.imwrite("Grises.jpg", aux)
+        imagris = cv2.imread("Grises.jpg")
+        #cv2.waitKey(0)
+
+    def multiplebinarization(self):
+        global imagris
+        img = imagris
+        # umbral 1
+        umbral = int(self.valorumbral.get())  # variable que obtiene valor de umbral por consola
+        umbral2 = int(self.valorumbral2.get())
+        ret, binary = cv2.threshold(img, umbral, 255, cv2.THRESH_BINARY)
+        cv2.imshow('Umbral 1', binary)
+        cv2.imwrite("umbral 1.jpg", binary)
+        imabi = cv2.imread("umbral 1.jpg")
+        # Umbral global
+        ret1, binary1 = cv2.threshold(img, umbral2, 255, cv2.THRESH_BINARY)
+        cv2.imshow('Umbral 2', binary1)
+        cv2.imwrite("Umbral 2.jpg", binary1)
+        imabi1 = cv2.imread("Umbral 2.jpg")
+        img_bwa = cv2.bitwise_xor(imabi, imabi1)
+        cv2.imshow('Union', img_bwa)
+
+    def gethistogrammbina(self):
+        global img_bwa
+        img = img_bwa
+        hist = cv2.calcHist([img], [0], None, [255], [0, 255])
+        plt.plot(hist, color='gray')
+        plt.xlabel('Niveles de brillo')
+        plt.ylabel('Cantidad de Píxeles')
+        plt.show()
+        cv2.destroyAllWindows()
+
+    '''
+        elemento1=[[0,0,0,0,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0,0],[0,0,1,0,0,0,0,1,0,0],[0,0,1,1,1,1,1,0,0,0],
+                   [0,0,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
+
+        elemento2=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1],
+                   [1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1],[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                   [1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1],
+                   [1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1],
+                   [1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1],
+                   [1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1],
+                   [1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
+    '''
+    def morfologia(self):
+        global imagris
+        grises = imagris
+        #grises = cv2.cvtColor(imagris, cv2.COLOR_BGR2GRAY)
+        #mandamos llamar la imagen original ya convertida a grises
+        #now we have to binarize with value umbral
+        valormo = int(self.valormorfo.get())
+        ret, binaria = cv2.threshold(grises, valormo, 255, cv2.THRESH_BINARY)
+        cv2.imshow('Binarizacion', binaria)
+        cv2.imwrite("Binarizacion.jpg", binaria)
+        imghom = cv2.imread("Binarizacion.jpg")
+
+        #image binarized
+        #now we have to add the ee
+        imagenhom = imghom
+        elemento1 = np.array(([0 , 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                              [0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+                              [0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+                              [0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), dtype="int")
+
+        elemento2 = np.array((
+            [0, 1, 0],
+            [1, 0, 1],
+            [0, 1, 0]), dtype="int")
+
+        #elemento2 = np.array(([[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1],
+         #            [1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1],[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+          #           [1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1],
+           #          [1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1],
+            #         [1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1],
+             #        [1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1],
+              #       [1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]), dtype="int")
+
+        #in this part we have to put hit or miss transformate
+        output_image2 = cv2.cvtColor(imghom, cv2.COLOR_BGR2GRAY)
+        output_image = cv2.morphologyEx(output_image2, cv2.MORPH_HITMISS, elemento2)
+        cv2.imshow("Hit or Miss", output_image)
+        output_image1 = cv2.morphologyEx(output_image2, cv2.MORPH_HITMISS, elemento1)
+        cv2.imshow("Hit or Miss 1", output_image1)
+        rate = 50
+        kernel = (elemento2 + 1) * 127
+        kernel = np.uint8(kernel)
+        kernel = cv2.resize(kernel, (400, 400))
+        kernel1 = (elemento1 + 1) * 127
+        kernel1 = np.uint8(kernel1)
+        kernel1 = cv2.resize(kernel1, (400, 400))
+        #kernel = cv2.resize(kernel, None, fx=rate, fy=rate, interpolation=cv2.INTER_NEAREST)
+        #cv2.imshow("kernel", kernel)
+        #cv2.imshow("kernel 1", kernel1)
+        #cv2.moveWindow("kernel", 0, 0)
+        #output_image = cv2.resize(output_image, (400, 400))
+        #output_image = cv2.resize(output_image, None, fx=rate, fy=rate, interpolation=cv2.INTER_NEAREST)
+        #cv2.imshow("Hit or Miss", output_image)
+        #cv2.moveWindow("Hit or Miss", 500, 200)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
+
+    def erosion(self):  # algoritmo que realiza la convolucion y calculo de la media aritmetica
+        global imagenl, imalap, imapon, imarit
+        leer=imagris
+        valormo = int(self.valormorfo.get())#lectura de datos
+        ret, binaria = cv2.threshold(leer, valormo, 255, cv2.THRESH_BINARY_INV)
+        cv2.imshow('Binarizacion', binaria)
+        cv2.imwrite("Binarizacion.jpg", binaria)
+        imghom = cv2.imread("Binarizacion.jpg")
+
+        #para logo grande
+        ret, binaria2 = cv2.threshold(leer, valormo, 255, cv2.THRESH_BINARY)
+        cv2.imshow('Binarizacion2', binaria2)
+        cv2.imwrite("Binarizacion2.jpg", binaria2)
+        imghom2 = cv2.imread("Binarizacion2.jpg")
+        #erosión
+        #elementos de estructura
+
+        #este es el bueno
+        elemento1 = np.array(([0, 0, 0, 0, 1, 1],
+                              [0, 1, 1, 1, 1, 1],
+                              [1, 0, 0, 0, 0, 1]), np.uint8)
+
+        elemento22 = (([1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                     [1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                      [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                     [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                     [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                      [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                     [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                      [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                      [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                      [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]),np.uint8)
+
+        ee = np.array(( [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                        [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0]), np.uint8)
+
+        ee2 = np.array(([0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                       [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                       [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                       [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                       [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+                       [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1]), np.uint8)
+        
+        eenuevo = np.array(([0, 0, 1, 1, 1, 0, 0, 1, 0, 0],
+                            [0, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+                            [1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
+                            [1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
+                            [1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                            [1, 1, 1, 0, 0, 1, 1, 1, 1, 1],
+                            [1, 1, 0, 0, 1, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
+                            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 1, 1, 1, 1, 1, 1, 1]), np.uint8)
+
+        eenuevo2 = np.array(([0, 0, 1, 1, 1, 0, 0, 1, 0, 0],
+                            [0, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+                            [1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
+                            [1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
+                            [1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                            [1, 1, 1, 0, 0, 1, 1, 1, 1, 1],
+                            [1, 1, 0, 0, 1, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
+                            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 1, 1, 1, 1, 1, 1, 1]), np.uint8)
+
+
+        #erosion = cv2.erode(imghom, elemento1, iterations=1)
+        #cv2.imshow("Erosión",erosion)
+        #cv2.imwrite("Final.jpg",erosion)
+
+        erosion2 = cv2.erode(imghom2, eenuevo2, iterations=1)
+        cv2.imshow("Erosión", erosion2)
+        cv2.imwrite("Final2.jpg", erosion2)
+
+
+'''
+        #implementación de erosión
+        mataux = np.zeros((imghom.shape[0], imghom.shape[1]), dtype=int)#matriz de tamaño igual a binaria
+        w = imghom.shape[0]-5
+        h = imghom.shape[1]-2
+        for n in range(1, w):#for para x
+            for m in range(1, h):#for para y
+                for t in range(1, imghom.shape[2]):#para canal
+
+                    if imghom.item(n,m,t) & imghom.item(n+1,m,t) & imghom.item(n+2,m,t) & imghom.item(n+3,m,t) & imghom.item(n+4,m,t) & imghom.item(n+5,m,t) & imghom.item(n,m+1,t) & imghom.item(n+1,m+1,t) & imghom.item(n+2,m+1,t) & imghom.item(n+3,m+1,t) & imghom.item(n+4,m+1,t) & imghom.item(n+5,m+1,t) & imghom.item(n,m+2,t) & imghom.item(n+1,m+2,t) & imghom.item(n+2,m+2,t) & imghom.item(n+3,m+2,t) & imghom.item(n+4,m+2,t) & imghom.item(n+5,m+1,t) == 1:
+                        mataux.itemset((n, m), 1)
+                        mataux.itemset((n+1,m), 0)
+                        mataux.itemset((n+2,m), 0)
+                        mataux.itemset((n+3,m), 0)
+                        mataux.itemset((n+4,m), 0)
+                        mataux.itemset((n+5,m), 1)
+                        mataux.itemset((n,m+1), 1)
+                        mataux.itemset((n+1,m+1),1)
+                        mataux.itemset((n+2,m+1),1)
+                        mataux.itemset((n + 3, m + 1), 1)
+                        mataux.itemset((n + 4, m + 1), 1)
+                        mataux.itemset((n + 5, m + 1), 0)
+                        mataux.itemset((n, m + 2), 1)
+                        mataux.itemset((n+1, m + 2), 1)
+                        mataux.itemset((n+2, m + 2), 0)
+                        mataux.itemset((n + 3, m + 2), 0)
+                        mataux.itemset((n + 4, m + 2), 0)
+                        mataux.itemset((n + 5, m + 2), 0)
+
+                    else:
+                        mataux.itemset((n, m), 0)
+                        mataux.itemset((n + 1, m), 0)
+                        mataux.itemset((n + 2, m), 0)
+                        mataux.itemset((n + 3, m), 0)
+                        mataux.itemset((n + 4, m), 0)
+                        mataux.itemset((n + 5, m), 0)
+                        mataux.itemset((n, m + 1), 0)
+                        mataux.itemset((n + 1, m + 1), 0)
+                        mataux.itemset((n + 2, m + 1), 0)
+                        mataux.itemset((n + 3, m + 1), 0)
+                        mataux.itemset((n + 4, m + 1), 0)
+                        mataux.itemset((n + 5, m + 1), 0)
+                        mataux.itemset((n, m + 2), 0)
+                        mataux.itemset((n + 1, m + 2), 0)
+                        mataux.itemset((n + 2, m + 2), 0)
+                        mataux.itemset((n + 3, m + 2), 0)
+                        mataux.itemset((n + 4, m + 2), 0)
+                        mataux.itemset((n + 5, m + 2), 0)
+
+        aux=np.array(mataux, dtype="uint8")
+        cv2.imshow("Erosion",aux)
+        cv2.waitKey(0)
+       # mataux.itemset((n, m), media)
+        # return mataux
+        #print(mataux)
+        #aux = np.array(mataux, dtype="uint8")
+        #cv2.imshow("Filtro Laplaciano", aux)
+        #cv2.imwrite("Laplaciano.jpg", aux)
+        #imalap = cv2.imread(("Laplaciano.jpg"))
+        # cv2.waitKey(0)
+'''
+        
+window2 = Tk() #segmentacion
+Ventana2 = Ventana2(window2)
+window2.config(bg="black")
+window2.geometry('800x600')
+window2.resizable(width=0, height=0)
+window2.title("Umbralización")
+window2.iconbitmap("Icon.ico")
+#window0.mainloop()
+window2.mainloop()
+'''
+window0 = Tk() #ajuste de brillo
+Ventana = Ventana(window0)
+window0.config(bg="black")
+window0.geometry('600x700')
+window0.resizable(width=0, height=0)
+window0.title("AJUSTE DE BRILLO")
+window0.iconbitmap("Icon.ico")
+window1 = Tk() #segmentacion
+Ventana1 = Ventana1(window1)
+window1.config(bg="black")
+window1.geometry('500x500')
+window1.resizable(width=0, height=0)
+window1.title("SEGMENTACION")
+#window1.iconbitmap("Icon.ico")
+#window0.mainloop()
+window1.mainloop()
+'''
